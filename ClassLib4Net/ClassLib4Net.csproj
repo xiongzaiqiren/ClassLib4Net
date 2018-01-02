@@ -37,8 +37,8 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="StackExchange.Redis, Version=1.2.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\chinahxmedia\src\packages\StackExchange.Redis.1.2.5\lib\net45\StackExchange.Redis.dll</HintPath>
+    <Reference Include="StackExchange.Redis, Version=1.2.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\StackExchange.Redis.1.2.6\lib\net45\StackExchange.Redis.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -60,13 +60,14 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="ThoughtWorks.QRCode, Version=1.0.4778.30637, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\chinahxmedia\src\packages\ThoughtWorks.QRCode.1.1.0\lib\ThoughtWorks.QRCode.dll</HintPath>
+      <HintPath>..\packages\ThoughtWorks.QRCode.1.1.0\lib\ThoughtWorks.QRCode.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\ApiModel.cs" />
     <Compile Include="AsyncHelper.cs" />
+    <Compile Include="BarCodeHelper.cs" />
     <Compile Include="CacheHelper.cs" />
     <Compile Include="Cache\CacheManager.cs" />
     <Compile Include="Cache\CacheManagerConfig.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="StringHelper.cs" />
     <Compile Include="SystemInfo.cs" />
     <Compile Include="Vdn\StreamOceanHelper.cs" />
+    <Compile Include="VerificationCode\Captcha.cs" />
     <Compile Include="WindowsAuthorityMock.cs" />
     <Compile Include="XmlHelper.cs" />
   </ItemGroup>

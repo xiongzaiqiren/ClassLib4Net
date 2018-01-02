@@ -5,6 +5,10 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLib4Net", "ClassLib4Net\ClassLib4Net.csproj", "{2EBF5D23-261D-4ABA-B74C-C6ED1B8ECDE6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "测试", "测试", "{E70C947F-3C0F-4E8D-BD97-D5EF9A18C1BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWebApplication", "TestWebApplication\TestWebApplication.csproj", "{BF5F95F7-5AC4-4BAC-BFC7-A7A3DAB3D2B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,8 +19,15 @@ Global
 		{2EBF5D23-261D-4ABA-B74C-C6ED1B8ECDE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EBF5D23-261D-4ABA-B74C-C6ED1B8ECDE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EBF5D23-261D-4ABA-B74C-C6ED1B8ECDE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF5F95F7-5AC4-4BAC-BFC7-A7A3DAB3D2B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF5F95F7-5AC4-4BAC-BFC7-A7A3DAB3D2B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF5F95F7-5AC4-4BAC-BFC7-A7A3DAB3D2B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF5F95F7-5AC4-4BAC-BFC7-A7A3DAB3D2B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BF5F95F7-5AC4-4BAC-BFC7-A7A3DAB3D2B5} = {E70C947F-3C0F-4E8D-BD97-D5EF9A18C1BD}
 	EndGlobalSection
 EndGlobal

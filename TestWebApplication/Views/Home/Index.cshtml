@@ -1,0 +1,22 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ClassLib4Net测试实例（Web of MVC）</title>
+</head>
+<body>
+    <p>@Html.Raw(ClassLib4Net.BarCodeHelper.Get39ToHtml("xiongzaiqiren123", 2, 50))</p>
+    <p>@Html.Raw(ClassLib4Net.BarCodeHelper.GetEAN13ToHtml("0123456789123", 2, 50))</p>
+    <p><img src="~/Handler/BarCode39.ashx?OrderNo=32134411" /></p>
+    <p><img src="~/Handler/Captcha.ashx" /></p>
+
+    <div> 
+    </div>
+</body>
+</html>

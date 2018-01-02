@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
 [assembly: AssemblyTitle("ClassLib4Net")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("公共.Net类库")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("熊仔其人")]
 [assembly: AssemblyProduct("ClassLib4Net")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2017")]
+[assembly: AssemblyCopyright("Copyright © classbao.com 2017 熊仔其人")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
