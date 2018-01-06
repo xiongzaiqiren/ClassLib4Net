@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System;
+using System.Web;
 
 namespace ClassLib4Net
 {
@@ -28,11 +29,18 @@ namespace ClassLib4Net
         /// 设置键值对
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="val"></param>
-		public static void SetValue(string key, object val)
-		{
-			HttpContext.Current.Session.Add(key, val);
-		}
+        /// <param name="value"></param>
+		public static void SetValue(string key, object value)
+        {
+            if(string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException("key is null.");
+            if(null == value || DBNull.Value == value) throw new ArgumentNullException("value is null.");
+
+            var obj = HttpContext.Current.Session[key];
+            if(null != obj)
+                HttpContext.Current.Session[key] = value;
+            else
+                HttpContext.Current.Session.Add(key, value);
+        }
 
         /// <summary>
         /// 根据key移除缓存

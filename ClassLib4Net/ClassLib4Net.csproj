@@ -141,6 +141,7 @@
     <Compile Include="SystemInfo.cs" />
     <Compile Include="Vdn\StreamOceanHelper.cs" />
     <Compile Include="VerificationCode\Captcha.cs" />
+    <Compile Include="VerificationCode\ValidateImg.cs" />
     <Compile Include="WindowsAuthorityMock.cs" />
     <Compile Include="XmlHelper.cs" />
   </ItemGroup>

@@ -10,6 +10,8 @@ namespace ClassLib4Net
 {
     /// <summary>
     /// Cookie帮助类
+    /// 作者：熊学浩
+    /// 最后修改时间：2018/01/06
     /// </summary>
     public class CookieHelper
     {
