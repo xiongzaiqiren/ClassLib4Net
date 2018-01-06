@@ -13,12 +13,52 @@ namespace ClassLib4Net
     /// </summary>
     public class CookieHelper
     {
-        #region Cookie第一种写法
+        /// <summary>
+        /// 构建HttpCookie实例（未初始化Value或Values属性）
+        /// </summary>
+        /// <param name="Name">Cookie 的名称</param>
+        /// <param name="Minutes">Cookie 的过期时间（分钟）。</param>
+        /// <param name="Path">要与此 Cookie 一起传输的虚拟路径。 默认为 /，也就是服务器根目录。</param>
+        /// <param name="Domain">设置将此 Cookie 与其关联的域。默认值为当前域。（例如.baidu.com，如果是当前域名则该参数不要设置）</param>
+        /// <param name="HttpOnly">如果 Cookie 具有 HttpOnly 特性且不能通过客户端脚本访问，则为 true；否则为 false。 默认值为 false。</param>
+        /// <param name="Secure">如果通过 SSL 连接 (HTTPS) 传输 Cookie，则为 true；否则为 false。 默认值为 false。</param>
+        /// <param name="Shareable">确定 cookie 是否允许参与输出缓存。</param>
+        /// <returns></returns>
+        public static HttpCookie BuildCookie(string Name, double Minutes = 20D, string Path = "/", string Domain = "", bool HttpOnly = false, bool Secure = false, bool Shareable = false)
+        {
+            HttpCookie cookie = new HttpCookie(Name)
+            {
+                Expires = DateTime.Now.AddMinutes(Minutes),
+                Path = string.IsNullOrEmpty(Path) ? "/" : Path,
+                Domain = string.IsNullOrEmpty(Domain) ? string.Empty : Domain,
+                HttpOnly = HttpOnly,
+                Secure = Secure,
+                Shareable = Shareable
+            };
+            return cookie;
+        }
+        /// <summary>
+        /// 设置或增加HttpCookie
+        /// </summary>
+        /// <param name="cookie">HttpCookie</param>
+        public static void SetCookie(HttpCookie cookie)
+        {
+            if(null == cookie) throw new ArgumentNullException("cookie is null.");
+            if(string.IsNullOrWhiteSpace(cookie.Name)) throw new ArgumentNullException("cookie name is null.");
+            if(null == HttpContext.Current || null == HttpContext.Current.Response || null == HttpContext.Current.Response.Cookies) throw new NullReferenceException("HttpContext.Current.Response.Cookies is null.");
+            if(HttpContext.Current.Response.Cookies.AllKeys.Contains(cookie.Name))
+                HttpContext.Current.Response.Cookies.Set(cookie);
+            else
+                HttpContext.Current.Response.Cookies.Add(cookie);
+        }
+
+        #region Cookie
         /// <summary>
         /// 根据key获取value
         /// </summary>
         /// <param name="key">key</param>
         /// <returns></returns>
+        [Obsolete("请使用：" + nameof(CookieHelper.GetCookie), false)]
         public static string GetValue(string key)
         {
             var cookie = HttpContext.Current.Request.Cookies[key];
@@ -31,14 +71,15 @@ namespace ClassLib4Net
         /// <param name="key"></param>
         /// <param name="getValueFunc"></param>
         /// <returns></returns>
+        [Obsolete("请使用：" + nameof(CookieHelper.SetCookie), false)]
         public static string GetValue(string key, Func<string> getValueFunc)
         {
             var val = GetValue(key);
-            if (val == null)
+            if(val == null)
             {
                 val = getValueFunc();
                 var cookie = HttpContext.Current.Request.Cookies[key];
-                if (cookie == null)
+                if(cookie == null)
                 {
                     SetValue(key, val);
                     return val;
@@ -52,6 +93,7 @@ namespace ClassLib4Net
         /// </summary>
         /// <param name="key"></param>
         /// <param name="getValueFunc"></param>
+        [Obsolete("请使用：" + nameof(CookieHelper.SetCookie), false)]
         public static void SetValue(string key, Func<string> getValueFunc)
         {
             SetValue(key, getValueFunc());
@@ -62,15 +104,16 @@ namespace ClassLib4Net
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
+        [Obsolete("请使用：" + nameof(CookieHelper.SetCookie), false)]
         public static void SetValue(string key, object value)
         {
-            if (value == null)
+            if(value == null)
             {
                 HttpContext.Current.Response.Cookies.Remove(key);
                 return;
             }
             var cookie = HttpContext.Current.Request.Cookies[key];
-            if (cookie != null)
+            if(cookie != null)
             {
                 cookie.Value = value.ToString();
                 HttpContext.Current.Response.AppendCookie(cookie);
@@ -82,35 +125,78 @@ namespace ClassLib4Net
         /// <summary>
         /// 根据key移除项
         /// </summary>
-        /// <param name="key"></param>
-        public static void Remove(string key)
+        /// <param name="name"></param>
+        public static void Remove(string name)
         {
-            if (null != HttpContext.Current)
+            if(null != HttpContext.Current)
             {
-                if (null != HttpContext.Current.Request && null != HttpContext.Current.Request.Cookies && HttpContext.Current.Request.Cookies.AllKeys.Contains(key))
+                if(null != HttpContext.Current.Response && null != HttpContext.Current.Response.Cookies && HttpContext.Current.Response.Cookies.AllKeys.Contains(name))
                 {
-                    HttpContext.Current.Request.Cookies.Remove(key);
+                    HttpContext.Current.Response.Cookies.Remove(name);
                 }
-                if (null != HttpContext.Current.Response && null != HttpContext.Current.Response.Cookies && HttpContext.Current.Response.Cookies.AllKeys.Contains(key))
+
+                if(null != HttpContext.Current.Request && null != HttpContext.Current.Request.Cookies && HttpContext.Current.Request.Cookies.AllKeys.Contains(name))
                 {
-                    HttpContext.Current.Response.Cookies.Remove(key);
+                    var cookie = HttpContext.Current.Request.Cookies[name];
+                    cookie.Expires = DateTime.Now.AddDays(-1);
+                    if(HttpContext.Current.Response.Cookies.AllKeys.Contains(cookie.Name))
+                    {
+                        HttpContext.Current.Response.Cookies.Set(cookie);
+                    }
+                    else
+                    {
+                        HttpContext.Current.Response.Cookies.Add(cookie);
+                    }
+
+                    HttpContext.Current.Request.Cookies.Remove(name);
                 }
             }
         }
 
         /// <summary>
+        /// 获取Cookie
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static string GetCookie(string name)
+        {
+            if(null == HttpContext.Current || null == HttpContext.Current.Request || null == HttpContext.Current.Request.Cookies)
+                return string.Empty;
+            if(HttpContext.Current.Request.Cookies.AllKeys.Contains(name))
+            {
+                HttpCookie cookie = HttpContext.Current.Request.Cookies.Get(name);
+                if(!string.IsNullOrWhiteSpace(cookie.Value))
+                {
+                    return cookie.Value;
+                }
+                else if(cookie.Values != null && cookie.Values.Count > 0)
+                {
+                    StringBuilder result = new StringBuilder();
+                    foreach(var item in cookie.Values)
+                    {
+                        if(item != null)
+                            result.Append(item.ToString() + "&");
+                    }
+                    return string.IsNullOrEmpty(result.ToString()) ? string.Empty : result.ToString().Substring(result.ToString().Length - 1, 1);
+                }
+            }
+            return string.Empty;
+        }
+
+        /// <summary>
         /// 根据key获取Cookie模型
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
+        /// <typeparam name="T">可序列化的对象类型</typeparam>
+        /// <param name="name"></param>
         /// <returns></returns>
-        public static T Get<T>(string key) where T : class, new()
+        public static T Get<T>(string name) where T : class, new()
         {
-            if (HttpContext.Current.Request.Cookies[key] != null)
+            if(HttpContext.Current.Request.Cookies.AllKeys.Contains(name))
             {
-                if (!string.IsNullOrEmpty(HttpContext.Current.Request.Cookies[key].Value))
+                var cookie = HttpContext.Current.Request.Cookies[name];
+                if(!string.IsNullOrWhiteSpace(cookie.Value))
                 {
-                    return JsonHelper.DeSerialize<T>(HttpUtility.UrlDecode(HttpContext.Current.Request.Cookies[key].Value));
+                    return JsonHelper.DeSerialize<T>(HttpUtility.UrlDecode(cookie.Value));
                 }
                 else
                 {
@@ -124,26 +210,25 @@ namespace ClassLib4Net
         }
 
         /// <summary>
-        /// 设置指定key的Cookie模型
+        /// 设置Cookie
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="obj"></param>
-        /// <param name="key"></param>
-        /// <param name="days">过期时间（天）</param>
-        /// <param name="path">路径</param>
-        /// <param name="domain">域（例如.baidu.com，如果是当前域名则该参数不要设置）</param>
-        /// <param name="secure">http传输保密（注意：为true时javascript中可能取不到相应的Cookie）</param>
-        public static void Set<T>(T obj, string key, double days = 0d, string path = "/", string domain = null, bool secure = false) where T : class, new()
+        /// <typeparam name="T">可序列化的对象类型</typeparam>
+        /// <param name="obj">可序列化的对象实体</param>
+        /// <param name="Name">Cookie 的名称</param>
+        /// <param name="Minutes">Cookie 的过期时间（分钟）。</param>
+        /// <param name="Path">要与此 Cookie 一起传输的虚拟路径。 默认为 /，也就是服务器根目录。</param>
+        /// <param name="Domain">设置将此 Cookie 与其关联的域。默认值为当前域。（例如.baidu.com，如果是当前域名则该参数不要设置）</param>
+        /// <param name="HttpOnly">如果 Cookie 具有 HttpOnly 特性且不能通过客户端脚本访问，则为 true；否则为 false。 默认值为 false。</param>
+        /// <param name="Secure">如果通过 SSL 连接 (HTTPS) 传输 Cookie，则为 true；否则为 false。 默认值为 false。</param>
+        /// <param name="Shareable">确定 cookie 是否允许参与输出缓存。</param>
+        public static void Set<T>(T obj, string Name, double Minutes = 20D, string Path = "/", string Domain = "", bool HttpOnly = false, bool Secure = false, bool Shareable = false) where T : class, new()
         {
             string JsonStr = JsonHelper.Serialize(obj);
-            //HttpCookie cookie = new HttpCookie(key, HttpUtility.UrlEncode(JsonStr));
-            HttpCookie cookie = SetCookie(key, days, path, domain, secure);
+            HttpCookie cookie = BuildCookie(Name, Minutes, Path, Domain, HttpOnly, Secure, Shareable);
             cookie.Value = HttpUtility.UrlEncode(JsonStr);
-            HttpContext.Current.Response.Cookies.Add(cookie);
+            SetCookie(cookie);
         }
-        #endregion
 
-        #region Cookie第二种写法
         /// <summary>
         /// 是否正常启用Cookie
         /// </summary>
@@ -152,179 +237,82 @@ namespace ClassLib4Net
         {
             try
             {
-                SetCookie("CookieIsEnable", "OK", (1 / 24 / 60)); //1分钟
-                if (string.IsNullOrEmpty(GetCookie("CookieIsEnable")))
+                SetCookie("OK", "CookieIsEnable"); //1分钟
+                if(string.IsNullOrWhiteSpace(GetCookie("CookieIsEnable")))
                     return false;
                 else
                     return true;
             }
-            catch (Exception Ex)
+            catch(Exception)
             {
                 return false;
             }
         }
 
-        private static HttpCookie SetCookie(string name, double days, string path, string domain, bool secure)
+        /// <summary>
+        /// 设置Cookie
+        /// </summary>
+        /// <param name="Value">可以ToString()的object实体</param>
+        /// <param name="Name">Cookie 的名称</param>
+        /// <param name="Minutes">Cookie 的过期时间（分钟）。</param>
+        /// <param name="Path">要与此 Cookie 一起传输的虚拟路径。 默认为 /，也就是服务器根目录。</param>
+        /// <param name="Domain">设置将此 Cookie 与其关联的域。默认值为当前域。（例如.baidu.com，如果是当前域名则该参数不要设置）</param>
+        /// <param name="HttpOnly">如果 Cookie 具有 HttpOnly 特性且不能通过客户端脚本访问，则为 true；否则为 false。 默认值为 false。</param>
+        /// <param name="Secure">如果通过 SSL 连接 (HTTPS) 传输 Cookie，则为 true；否则为 false。 默认值为 false。</param>
+        /// <param name="Shareable">确定 cookie 是否允许参与输出缓存。</param>
+        public static void SetCookie(object Value, string Name, double Minutes = 20D, string Path = "/", string Domain = "", bool HttpOnly = false, bool Secure = false, bool Shareable = false)
         {
-            HttpCookie cookie = new HttpCookie(name);
-            if (0d != days)
-                cookie.Expires = DateTime.Now.AddDays(days);
-            cookie.Path = string.IsNullOrEmpty(path) ? "/" : path;
-            cookie.Domain = string.IsNullOrEmpty(domain) ? string.Empty : domain;
-            cookie.Secure = secure;
-            return cookie;
+            if(null == Value) throw new ArgumentNullException("Value is null.");
+            HttpCookie cookie = BuildCookie(Name, Minutes, Path, Domain, HttpOnly, Secure, Shareable);
+            cookie.Value = Value.ToString();
+            SetCookie(cookie);
         }
 
         /// <summary>
         /// 设置Cookie
-        /// 熊学浩
-        /// 2014年6月9日
         /// </summary>
-        /// <param name="name">名称</param>
-        /// <param name="value">存储对象Dictionary集合</param>
-        /// <param name="days">过期时间（天）</param>
-        /// <param name="path">路径</param>
-        /// <param name="domain">域（例如.baidu.com，如果是当前域名则该参数不要设置）</param>
-        /// <param name="secure">http传输保密（注意：为true时javascript中可能取不到相应的Cookie）</param>
-        public static void SetCookie(string name, System.Collections.Generic.Dictionary<string, string> value, double days = 0d, string path = "/", string domain = null, bool secure = false)
+        /// <param name="Value">Dictionary</param>
+        /// <param name="Name">Cookie 的名称</param>
+        /// <param name="Minutes">Cookie 的过期时间（分钟）。</param>
+        /// <param name="Path">要与此 Cookie 一起传输的虚拟路径。 默认为 /，也就是服务器根目录。</param>
+        /// <param name="Domain">设置将此 Cookie 与其关联的域。默认值为当前域。（例如.baidu.com，如果是当前域名则该参数不要设置）</param>
+        /// <param name="HttpOnly">如果 Cookie 具有 HttpOnly 特性且不能通过客户端脚本访问，则为 true；否则为 false。 默认值为 false。</param>
+        /// <param name="Secure">如果通过 SSL 连接 (HTTPS) 传输 Cookie，则为 true；否则为 false。 默认值为 false。</param>
+        /// <param name="Shareable">确定 cookie 是否允许参与输出缓存。</param>
+        public static void SetCookie(System.Collections.Generic.Dictionary<string, string> Value, string Name, double Minutes = 20D, string Path = "/", string Domain = "", bool HttpOnly = false, bool Secure = false, bool Shareable = false)
         {
-            if (string.IsNullOrEmpty(name) || value == null) return;
-
-            HttpCookie cookie = SetCookie(name, days, path, domain, secure);
-            foreach (var item in value)
+            if(null == Value) throw new ArgumentNullException("Value is null.");
+            HttpCookie cookie = BuildCookie(Name, Minutes, Path, Domain, HttpOnly, Secure, Shareable);
+            foreach(var item in Value)
             {
                 cookie.Values.Add(item.Key, item.Value);
             }
-            if (HttpContext.Current.Response.Cookies.AllKeys.Contains(name))
-            {
-                HttpContext.Current.Response.Cookies.Remove(name); //无法真正删除
-                HttpContext.Current.Response.Cookies[name].Expires = DateTime.Now.AddDays(-1);
-            }
-            HttpContext.Current.Response.Cookies.Add(cookie);
+            SetCookie(cookie);
         }
+
         /// <summary>
         /// 设置Cookie
-        /// 熊学浩
-        /// 2014年6月9日
         /// </summary>
-        /// <param name="name">名称</param>
-        /// <param name="value">存储对象 Hashtable表</param>
-        /// <param name="days">过期时间（天）</param>
-        /// <param name="path">路径</param>
-        /// <param name="domain">域（例如.baidu.com，如果是当前域名则该参数不要设置）</param>
-        /// <param name="secure">http传输保密（注意：为true时javascript中可能取不到相应的Cookie）</param>
-        public static void SetCookie(string name, System.Collections.Hashtable value, double days = 0d, string path = "/", string domain = null, bool secure = false)
+        /// <param name="Value">Dictionary</param>
+        /// <param name="Name">Cookie 的名称</param>
+        /// <param name="Minutes">Cookie 的过期时间（分钟）。</param>
+        /// <param name="Path">要与此 Cookie 一起传输的虚拟路径。 默认为 /，也就是服务器根目录。</param>
+        /// <param name="Domain">设置将此 Cookie 与其关联的域。默认值为当前域。（例如.baidu.com，如果是当前域名则该参数不要设置）</param>
+        /// <param name="HttpOnly">如果 Cookie 具有 HttpOnly 特性且不能通过客户端脚本访问，则为 true；否则为 false。 默认值为 false。</param>
+        /// <param name="Secure">如果通过 SSL 连接 (HTTPS) 传输 Cookie，则为 true；否则为 false。 默认值为 false。</param>
+        /// <param name="Shareable">确定 cookie 是否允许参与输出缓存。</param>
+        public static void SetCookie(System.Collections.Hashtable Value, string Name, double Minutes = 20D, string Path = "/", string Domain = "", bool HttpOnly = false, bool Secure = false, bool Shareable = false)
         {
-            if (string.IsNullOrEmpty(name) || value == null) return;
-
-            HttpCookie cookie = SetCookie(name, days, path, domain, secure);
-            foreach (System.Collections.DictionaryEntry item in value)
+            if(null == Value) throw new ArgumentNullException("Value is null.");
+            HttpCookie cookie = BuildCookie(Name, Minutes, Path, Domain, HttpOnly, Secure, Shareable);
+            foreach(System.Collections.DictionaryEntry item in Value)
             {
                 cookie.Values.Add(item.Key.ToString(), item.Value.ToString());
             }
-            if (HttpContext.Current.Response.Cookies.AllKeys.Contains(name))
-            {
-                HttpContext.Current.Response.Cookies.Remove(name);
-                HttpContext.Current.Response.Cookies[name].Expires = DateTime.Now.AddDays(-1);
-            }
-            HttpContext.Current.Response.Cookies.Add(cookie);
-        }
-
-        /// <summary>
-        /// 设置Cookie
-        /// 熊学浩
-        /// 2014年6月9日
-        /// </summary>
-        /// <param name="name">名称</param>
-        /// <param name="value">存储对象Dictionary集合</param>
-        /// <param name="days">过期时间（天）</param>
-        public static void SetCookie(string name, System.Collections.Generic.Dictionary<string, string> value, double days = 0d)
-        {
-            SetCookie(name, value, days, string.Empty, string.Empty, false);
-        }
-        /// <summary>
-        /// 设置Cookie
-        /// 熊学浩
-        /// 2014年6月9日
-        /// </summary>
-        /// <param name="name">名称</param>
-        /// <param name="value">存储对象 Hashtable表</param>
-        /// <param name="days">过期时间（天）</param>
-        public static void SetCookie(string name, System.Collections.Hashtable value, double days = 0d)
-        {
-            SetCookie(name, value, days, string.Empty, string.Empty, false);
-        }
-
-        /// <summary>
-        /// 设置Cookie
-        /// 熊学浩
-        /// 2014年6月9日
-        /// </summary>
-        /// <param name="name">名称</param>
-        /// <param name="value">存储对象（可以被.ToString()处理的非集合对象）</param>
-        /// <param name="days">过期时间（天）</param>
-        /// <param name="path">路径</param>
-        /// <param name="domain">域（例如.baidu.com，如果是当前域名则该参数不要设置）</param>
-        /// <param name="secure">http传输保密（注意：为true时javascript中可能取不到相应的Cookie）</param>
-        public static void SetCookie(string name, object value, double days = 0d, string path = "/", string domain = null, bool secure = false)
-        {
-            if (string.IsNullOrEmpty(name) || value == null) return;
-
-            HttpCookie cookie = SetCookie(name, days, path, domain, secure);
-            cookie.Value = value.ToString();
-
-            if (HttpContext.Current.Response.Cookies.AllKeys.Contains(name))
-            {
-                HttpContext.Current.Response.Cookies.Remove(name);
-                HttpContext.Current.Response.Cookies[name].Expires = DateTime.Now.AddDays(-1);
-            }
-            HttpContext.Current.Response.Cookies.Add(cookie);
-        }
-
-        /// <summary>
-        /// 设置Cookie
-        /// 熊学浩
-        /// 2014年6月9日
-        /// </summary>
-        /// <param name="name">名称</param>
-        /// <param name="value">存储对象（可以被.ToString()处理的非集合对象）</param>
-        /// <param name="days">过期时间（天）</param>
-        public static void SetCookie(string name, object value, double days = 0d)
-        {
-            SetCookie(name, value, days, string.Empty, string.Empty, false);
-        }
-
-        /// <summary>
-        /// 获取Cookie
-        /// 熊学浩
-        /// 2014年6月9日
-        /// </summary>
-        /// <param name="name">名称</param>
-        /// <returns></returns>
-        public static string GetCookie(string name)
-        {
-            HttpCookie cookie = HttpContext.Current.Request.Cookies.Get(name);
-            if (cookie != null)
-            {
-                if (!string.IsNullOrEmpty(cookie.Value))
-                {
-                    return cookie.Value;
-                }
-                else if (cookie.Values != null && cookie.Values.Count > 0)
-                {
-                    StringBuilder result = new StringBuilder();
-                    foreach (var item in cookie.Values)
-                    {
-                        if (item != null)
-                            result.Append(item.ToString() + "&");
-                    }
-                    return string.IsNullOrEmpty(result.ToString()) ? string.Empty : result.ToString().Substring(result.ToString().Length - 1, 1);
-                }
-            }
-            return string.Empty;
+            SetCookie(cookie);
         }
         #endregion
-
+        
         #region CookieContainer
         /// <summary>
         /// 读取全部Cookie

@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("ClassLib4Net")]
 [assembly: AssemblyDescription("公共.Net类库")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("熊仔其人")]
+[assembly: AssemblyCompany("熊仔其人(熊学浩)")]
 [assembly: AssemblyProduct("ClassLib4Net")]
-[assembly: AssemblyCopyright("Copyright © classbao.com 2017 熊仔其人")]
+[assembly: AssemblyCopyright("Copyright © classbao.com 2017 熊仔其人(熊学浩)")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

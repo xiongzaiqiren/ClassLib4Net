@@ -145,6 +145,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Handler\BarCode39.ashx" />
     <Content Include="Handler\Captcha.ashx" />
+    <Content Include="Views\Home\Cookie.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
