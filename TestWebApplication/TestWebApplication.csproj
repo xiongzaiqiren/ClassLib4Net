@@ -135,6 +135,9 @@
     <Compile Include="Handler\Captcha.ashx.cs">
       <DependentUpon>Captcha.ashx</DependentUpon>
     </Compile>
+    <Compile Include="Handler\QRCode.ashx.cs">
+      <DependentUpon>QRCode.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Handler\ValidateImg.ashx.cs">
       <DependentUpon>ValidateImg.ashx</DependentUpon>
     </Compile>
@@ -151,6 +154,7 @@
     <Content Include="Handler\Captcha.ashx" />
     <Content Include="Views\Home\Cookie.cshtml" />
     <Content Include="Handler\ValidateImg.ashx" />
+    <Content Include="Handler\QRCode.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
