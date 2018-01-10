@@ -124,6 +124,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\ApiController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -157,7 +158,9 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\Api\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClassLib4Net\ClassLib4Net.csproj">
       <Project>{2ebf5d23-261d-4aba-b74c-c6ed1b8ecde6}</Project>
