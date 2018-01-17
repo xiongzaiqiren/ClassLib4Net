@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 
+/// <summary>
+/// Api模型
+/// </summary>
 namespace ClassLib4Net.Api
 {
     #region interface
@@ -78,7 +80,7 @@ namespace ClassLib4Net.Api
         [DataMember(EmitDefaultValue = true, IsRequired = true)]
         public string Message { get; set; }
 
-        public ApiModel() { }
+        public ApiModel() { Status = 0; Message = ""; }
         public ApiModel(long status = 0, string message = "") { Status = status; Message = message; }
     }
 
@@ -96,7 +98,7 @@ namespace ClassLib4Net.Api
         [DataMember(EmitDefaultValue = true, IsRequired = true)]
         public T Data { get; set; }
 
-        public ApiDataModel() { }
+        public ApiDataModel() : base() { Data = default(T); }
         public ApiDataModel(T data = default(T), long status = 0, string message = "") : base(status, message) { Data = data; }
     }
 
@@ -108,7 +110,7 @@ namespace ClassLib4Net.Api
     public class ApiDataModel : ApiDataModel<object>
     {
         public ApiDataModel() : base() { }
-        public ApiDataModel(object data = null, long status = 0, string message = "") : base(data, status, message) { }
+        public ApiDataModel(object data = default(object), long status = 0, string message = "") : base(data, status, message) { }
     }
     #endregion
 
@@ -148,8 +150,8 @@ namespace ClassLib4Net.Api
         [DataMember(EmitDefaultValue = true, IsRequired = true)]
         public long PageCount { get { return (Total - 1) / PageSize + 1; } set { } }
 
-        public ApiListModel() { }
-        public ApiListModel(ICollection<T> list = null, long total = 0, long status = 0, string message = "") : base(status, message) { Total = total; List = list; }
+        public ApiListModel() : base() { List = default(ICollection<T>); }
+        public ApiListModel(ICollection<T> list = default(ICollection<T>), long total = 0, long status = 0, string message = "") : base(status, message) { List = list; Total = total; }
     }
 
     /// <summary>
@@ -160,8 +162,8 @@ namespace ClassLib4Net.Api
     public class ApiListModel : ApiListModel<object>
     {
         public ApiListModel() : base() { }
-        public ApiListModel(ICollection<object> list = null, long total = 0, long status = 0, string message = "") : base(list, total, status, message) { }
-    } 
+        public ApiListModel(ICollection<object> list = default(ICollection<object>), long total = 0, long status = 0, string message = "") : base(list, total, status, message) { }
+    }
     #endregion
 
     #region ApiListData
@@ -200,8 +202,8 @@ namespace ClassLib4Net.Api
         [DataMember(EmitDefaultValue = true, IsRequired = true)]
         public long PageCount { get { return (Total - 1) / PageSize + 1; } set { } }
 
-        public ApiListData() { }
-        public ApiListData(ICollection<T> list = null, long total = 0) { List = list; Total = total; }
+        public ApiListData() { List = default(ICollection<T>); }
+        public ApiListData(ICollection<T> list = default(ICollection<T>), long total = 0) { List = list; Total = total; }
     }
 
     /// <summary>
@@ -238,8 +240,8 @@ namespace ClassLib4Net.Api
         [DataMember(EmitDefaultValue = true, IsRequired = true)]
         public long PageCount { get { return (Total - 1) / PageSize + 1; } set { } }
 
-        public ApiListData() { }
-        public ApiListData(ICollection list = null, long total = 0) { List = list; Total = total; }
+        public ApiListData() { List = default(ICollection); }
+        public ApiListData(ICollection list = default(ICollection), long total = 0) { List = list; Total = total; }
     }
     #endregion
 
@@ -252,7 +254,7 @@ namespace ClassLib4Net.Api
     public class ApiDataListModel<T> : ApiDataModel<ApiListData<T>>
     {
         public ApiDataListModel() : base() { Data = new ApiListData<T>(); }
-        public ApiDataListModel(ICollection<T> list = null, long total = 0) : base(new ApiListData<T>() { List = list, Total = total }) { }
+        public ApiDataListModel(ICollection<T> list = default(ICollection<T>), long total = 0) : base(new ApiListData<T>() { List = list, Total = total }) { }
     }
 
     /// <summary>
@@ -263,7 +265,7 @@ namespace ClassLib4Net.Api
     public class ApiDataListModel : ApiDataModel<ApiListData>
     {
         public ApiDataListModel() : base() { Data = new ApiListData(); }
-        public ApiDataListModel(ICollection list = null, long total = 0) : base(new ApiListData() { List = list, Total = total }) { }
+        public ApiDataListModel(ICollection list = default(ICollection), long total = 0) : base(new ApiListData() { List = list, Total = total }) { }
     }
 
 }
