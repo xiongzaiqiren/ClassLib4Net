@@ -13,60 +13,62 @@ namespace ClassLib4Net
 	/// </summary>
 	public class FileHelper
 	{
-		#region 得到文件名的方法
-		/// <summary>
-		/// 得到文件名的方法
-		/// </summary>
-		/// <param name="str">完整文件名</param>
-		/// <returns>文件名</returns>
-		public static string GetFileName(string str)
-		{
-			int index = str.LastIndexOf('\\');
-			if (index != -1)
-				return str.Substring(index + 1);
-			else
-				return "";
-		}
-		#endregion
+        #region 得到文件名的方法
+        /// <summary>
+        /// 得到文件名的方法
+        /// </summary>
+        /// <param name="physicalPath">包含文件名的物理路径</param>
+        /// <returns>文件名</returns>
+        [Obsolete("建议使用 System.IO.Path.GetFileNameWithoutExtension")]
+        public static string GetFileName(string physicalPath)
+        {
+            int index = physicalPath.LastIndexOf('\\');
+            if(index != -1)
+                return physicalPath.Substring(index + 1);
+            else
+                return "";
+        }
+        #endregion
 
-		#region 创建目录的方法
-		/// <summary>
-		/// 创建目录的方法
-		/// </summary>
-		/// <param name="path">要创建目录的路径</param>
-		public static void CreateDirectory(string path)
-		{
-			try
-			{
-				path = path.Replace("/", @"\");
-				if (!Directory.Exists(path))
-				{
-					Directory.CreateDirectory(path);
-				}
-			}
-			catch (Exception ex)
-			{
-				throw new Exception("在'" + path + "'下创建目录失败。错误信息：" + ex.Message);
-			}
-		}
-		#endregion
+        #region 创建目录的方法
+        /// <summary>
+        /// 如果目录不存在则创建目录的方法
+        /// </summary>
+        /// <param name="path">要创建目录路径（“/”会自动转换成“\”）</param>
+        public static void CreateDirectory(string path)
+        {
+            try
+            {
+                path = path.Replace("/", @"\");
+                if(!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("在'" + path + "'下创建目录失败。错误信息：" + ex.Message);
+            }
+        }
+        #endregion
 
-		#region 取扩展名的方法
-		/// <summary>
-		/// 取扩展名的方法
-		/// </summary>
-		/// <param name="_srcName">完整文件名</param>
-		/// <returns>扩展名</returns>
-		public static string GetSuffix(string _srcName)
-		{
-			int pos = _srcName.LastIndexOf(".");
-			if (pos != -1)
-				_srcName = _srcName.ToLower().Substring(pos);
-			else
-				_srcName = ".uitv";
+        #region 取扩展名的方法
+        /// <summary>
+        /// 取扩展名的方法
+        /// </summary>
+        /// <param name="path">完整文件名</param>
+        /// <returns>扩展名</returns>
+        [Obsolete("建议使用 System.IO.Path.GetExtension")]
+        public static string GetSuffix(string path)
+        {
+            int pos = path.LastIndexOf(".");
+            if(pos >= 0)
+                path = path.ToLower().Substring(pos);
+            else
+                path = ".uitv";
 
-			return _srcName;
-		}
+            return path;
+        }
 		#endregion
 
 		#region 根据时间合成文件名的方法
@@ -101,54 +103,54 @@ namespace ClassLib4Net
 					+ dt.Millisecond.ToString();
 			return fileName + GetSuffix(_srcName);
 		}
-		#endregion
+        #endregion
 
-		#region 删除文件的方法
-		/// <summary>
-		/// 删除文件的方法
-		/// </summary>
-		/// <param name="_src">完整文件名</param>
-		public static void RemoveFile(string _src)
-		{
-			try
-			{
-				if (File.Exists(_src))
-					File.Delete(_src);
-			}
-			catch (Exception ex)
-			{
-				throw new Exception("删除文件'" + _src + "'失败。错误信息：" + ex.Message);
-			}
-		}
-		#endregion
+        #region 删除文件的方法
+        /// <summary>
+        /// 如果文件存在则删除文件的方法
+        /// </summary>
+        /// <param name="physicalPath">完整文件名</param>
+        public static void RemoveFile(string physicalPath)
+        {
+            try
+            {
+                if(File.Exists(physicalPath))
+                    File.Delete(physicalPath);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("删除文件'" + physicalPath + "'失败。错误信息：" + ex.Message);
+            }
+        }
+        #endregion
 
-		#region 重命名文件的方法
-		/// <summary>
-		/// 重命名文件的方法
-		/// </summary>
-		/// <param name="_src">完整文件名</param>
-		/// <param name="_newName">新完整文件名</param>
-		public static void ReNameFile(string _src, string _newName)
-		{
-			try
-			{
-				int pos = _src.LastIndexOf(@"\");
-				if (pos != -1)
-				{
-					string path = _src.Substring(0, pos);
-					path = path + @"\" + _newName + GetSuffix(_src);
-					if (File.Exists(_src))
-					{
-						File.Copy(_src, path, true);
-						File.Delete(_src);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				throw new Exception("重命名文件'" + _src + "'失败。错误信息：" + ex.Message);
-			}
-		}
+        #region 重命名文件的方法
+        /// <summary>
+        /// 重命名文件的方法
+        /// </summary>
+        /// <param name="physicalPath">完整文件名</param>
+        /// <param name="newName">新文件名(不包含后缀名)</param>
+        public static void RenameFile(string physicalPath, string newName)
+        {
+            try
+            {
+                int pos = physicalPath.LastIndexOf(@"\");
+                if(pos != -1)
+                {
+                    string path = physicalPath.Substring(0, pos);
+                    path = path + @"\" + newName + GetSuffix(physicalPath);
+                    if(File.Exists(physicalPath))
+                    {
+                        File.Copy(physicalPath, path, true);
+                        File.Delete(physicalPath);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("重命名文件'" + physicalPath + "'失败。错误信息：" + ex.Message);
+            }
+        }
 		#endregion
 
 		#region 往文件里追加内容的方法
@@ -161,193 +163,322 @@ namespace ClassLib4Net
 		{
 			AppendFile(_content, path, Encoding.Default);
 		}
-		/// <summary>
-		/// 往文件里追加内容的方法
-		/// </summary>
-		/// <param name="_content">要追加的内容</param>
-		/// <param name="path">完整文件名</param>
-		/// <param name="encoding">文件编码</param>
-		public static void AppendFile(string _content, string path, Encoding encoding)
-		{
-			try
-			{
-				int pos = path.LastIndexOf(@"\");
-				if (pos != -1)
-				{
-					string dir = path.Substring(0, pos);
-					if (!Directory.Exists(dir))
-					{
-						Directory.CreateDirectory(dir);
-					}
+        /// <summary>
+        /// 往文件里追加内容的方法
+        /// </summary>
+        /// <param name="content">要追加的内容</param>
+        /// <param name="physicalPath">完整文件名</param>
+        /// <param name="encoding">文件编码</param>
+        public static void AppendFile(string content, string physicalPath, Encoding encoding)
+        {
+            try
+            {
+                int pos = physicalPath.LastIndexOf(@"\");
+                if(pos != -1)
+                {
+                    string dir = physicalPath.Substring(0, pos);
+                    CreateDirectory(dir);
+                    using(FileStream fs = new FileStream(physicalPath, FileMode.Append))
+                    {
+                        byte[] _content = encoding.GetBytes(content);
+                        fs.Write(_content, 0, content.Length);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("往文件'" + physicalPath + "'追加内容失败。错误信息：" + ex.Message);
+            }
+        }
+        #endregion
 
-					using (FileStream fs = new FileStream(path, FileMode.Append))
-					{
-						byte[] content = encoding.GetBytes(_content);
-						fs.Write(content, 0, content.Length);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				throw new Exception("往文件'" + path + "'追加内容失败。错误信息：" + ex.Message);
-			}
-		}
-		#endregion
+        #region 将内容写入文件中，自动创建文件和目录的方法
+        /// <summary>
+        /// 将内容写入文件中，自动创建文件和目录的方法
+        /// </summary>
+        /// <param name="content">要写入的内容</param>
+        /// <param name="physicalPath">完整文件名</param>
+        public static void UpdateFile(string content, string physicalPath)
+        {
+            UpdateFile(content, physicalPath, Encoding.Default);
+        }
+        /// <summary>
+        /// 将内容写入文件中，自动创建文件和目录的方法
+        /// </summary>
+        /// <param name="content">要写入的内容</param>
+        /// <param name="physicalPath">完整文件名</param>
+        /// <param name="encoding">文件编码</param>
+        public static void UpdateFile(string content, string physicalPath, Encoding encoding)
+        {
+            try
+            {
+                physicalPath = physicalPath.Replace("/", @"\");
+                int pos = physicalPath.LastIndexOf(@"\");
+                if(pos != -1)
+                {
+                    string dir = physicalPath.Substring(0, pos);
+                    CreateDirectory(dir);
+                    using(FileStream fs = new FileStream(physicalPath, FileMode.Create))
+                    {
+                        byte[] _content = encoding.GetBytes(content);
+                        fs.Write(_content, 0, content.Length);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("创建文件'" + physicalPath + "'失败。错误信息：" + ex.Message);
+            }
+        }
+        #endregion
 
-		#region 将内容写入文件中，自动创建文件和目录的方法
-		/// <summary>
-		/// 将内容写入文件中，自动创建文件和目录的方法
-		/// </summary>
-		/// <param name="_content">要写入的内容</param>
-		/// <param name="path">完整文件名</param>
-		public static void UpdateFile(string _content, string path)
-		{
-			UpdateFile(_content, path, Encoding.Default);
-		}
-		/// <summary>
-		/// 将内容写入文件中，自动创建文件和目录的方法
-		/// </summary>
-		/// <param name="_content">要写入的内容</param>
-		/// <param name="path">完整文件名</param>
-		/// <param name="encoding">文件编码</param>
-		public static void UpdateFile(string _content, string path, Encoding encoding)
-		{
-			try
-			{
-				path = path.Replace("/", @"\");
-				int pos = path.LastIndexOf(@"\");
-				if (pos != -1)
-				{
-					string dir = path.Substring(0, pos);
-					if (!Directory.Exists(dir))
-					{
-						Directory.CreateDirectory(dir);
-					}
+        #region 读出模版数据的方法
+        /// <summary>
+        /// 读取文件内容
+        /// </summary>
+        /// <param name="physicalPath">要读取的完整文件路径</param>
+        /// <returns>模版内容</returns>
+        public static string ReadFile(string physicalPath)
+        {
+            return ReadFile(physicalPath, Encoding.Default);
+        }
+        /// <summary>
+        /// 读取文件内容
+        /// </summary>
+        /// <param name="physicalPath">要读取的完整文件路径</param>
+        /// <param name="encoding">文件编码</param>
+        /// <returns>模版内容</returns>
+        public static string ReadFile(string physicalPath, Encoding encoding)
+        {
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                using(StreamReader sr = new StreamReader(physicalPath, encoding))
+                {
+                    sb.Append(sr.ReadToEnd());
+                }
+                return sb.ToString();
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("读出模板'" + physicalPath + "'失败。错误信息：" + ex.Message);
+            }
+        }
+        #endregion
 
-					using (FileStream fs = new FileStream(path, FileMode.Create))
-					{
-						byte[] content = encoding.GetBytes(_content);
-						fs.Write(content, 0, content.Length);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				throw new Exception("创建文件'" + path + "'失败。错误信息：" + ex.Message);
-			}
-		}
-		#endregion
+        #region 保存上传文件的方法
+        /// <summary>
+        /// 保存上传文件的方法
+        /// </summary>
+        /// <param name="file">文件对象</param>
+        /// <param name="fileLocalPath">目录文件夹</param>
+        /// <param name="absPath">回传保存绝对路径</param>
+        [Obsolete("不建议使用")]
+        public static void SaveFileToServer(HttpPostedFile file, string fileLocalPath, ref string absPath)
+        {
+            try
+            {
+                DateTime now = DateTime.Now;
+                absPath = now.ToShortDateString().Replace("-", "") + @"\";
 
-		#region 读出模版数据的方法
-		/// <summary>
-		/// 读出模版数据的方法
-		/// </summary>
-		/// <param name="modelAbsPath">模版地址</param>
-		/// <returns>模版内容</returns>
-		public static string ReadPageModel(string modelAbsPath)
-		{
-			return ReadPageModel(modelAbsPath, Encoding.Default);
-		}
-		/// <summary>
-		/// 读出模版数据的方法
-		/// </summary>
-		/// <param name="modelAbsPath">模版地址</param>
-		/// <param name="encoding">文件编码</param>
-		/// <returns>模版内容</returns>
-		public static string ReadPageModel(string modelAbsPath, Encoding encoding)
-		{
-			try
-			{
-				StringBuilder sbModel = new StringBuilder();
-				using (StreamReader sr = new StreamReader(modelAbsPath, encoding))
-				{
-					sbModel.Append(sr.ReadToEnd());
-				}
-				return sbModel.ToString();
-			}
-			catch (Exception ex)
-			{
-				throw new Exception("读出模板'" + modelAbsPath + "'失败。错误信息：" + ex.Message);
-			}
-		}
-		#endregion
+                if(!Directory.Exists(fileLocalPath + absPath))
+                    Directory.CreateDirectory(fileLocalPath + absPath);
+                absPath += System.Guid.NewGuid() + GetSuffix(file.FileName);
 
-		#region 保存上传文件的方法
-		/// <summary>
-		/// 保存上传文件的方法
-		/// </summary>
-		/// <param name="_file">文件对象</param>
-		/// <param name="_folder">目录文件夹</param>
-		/// <param name="_absPath">回传保存绝对路径</param>
-		public static void SaveFileToServer(HttpPostedFile _file, string fileLocalPath, ref string _absPath)
-		{
-			try
-			{
-				DateTime now = DateTime.Now;
-				_absPath = now.ToShortDateString().Replace("-", "") + @"\";
+                file.SaveAs(fileLocalPath + absPath);
+                absPath = absPath.Replace("\\", "/");
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("保存文件'" + fileLocalPath + "'失败。错误信息：" + ex.Message);
+            }
+        }
+        /// <summary>
+        /// 保存上传文件的方法
+        /// </summary>
+        /// <param name="file">要保存的文件</param>
+        /// <param name="physicalFolder">保存到物理文件夹（示例：D:\WebSite\MyWeb\）</param>
+        /// <param name="relativePath">基于物理文件夹下的相对路径（示例：/Upload/MyFiles/）</param>
+        /// <param name="namingRules">文件命名规则</param>
+        /// <returns>是否保存成功</returns>
+        public static bool SaveFileToServer(HttpPostedFile file, string physicalFolder, ref string relativePath, NamingRules namingRules = NamingRules.Guid)
+        {
+            if(null == file) throw new ArgumentNullException("file参数为空");
+            if(string.IsNullOrWhiteSpace(physicalFolder)) throw new ArgumentNullException("physicalFolder参数为空");
+            try
+            {
+                string suffixName = GetSuffix(file.FileName);
+                string fileName = string.Empty;
+                switch(namingRules)
+                {
+                    case NamingRules.Guid: fileName = Guid.NewGuid().ToString(); break;
+                    case NamingRules.GuidWithoutCrossLine: fileName = Guid.NewGuid().ToString().Replace("-", ""); break;
+                    case NamingRules.DateTime: fileName = DateTime.Now.ToString("yyyyMMddHHmmssffffff"); break;
+                    case NamingRules.OriginalFileName: fileName = Path.GetFileNameWithoutExtension(file.FileName); break;
+                    case NamingRules.FromRelativePath:
+                        if(string.IsNullOrWhiteSpace(relativePath)) throw new ArgumentNullException("relativePath参数为空");
+                        suffixName = Path.GetExtension(relativePath);
+                        fileName = Path.GetFileNameWithoutExtension(relativePath);
+                        if(string.IsNullOrWhiteSpace(suffixName) || string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException("当前命名规则下relativePath参数必需包含完整文件名");
+                        break;
+                }
 
-				if (!Directory.Exists(fileLocalPath + _absPath))
-					Directory.CreateDirectory(fileLocalPath + _absPath);
-				_absPath += System.Guid.NewGuid() + GetSuffix(_file.FileName);
+                physicalFolder = string.Concat(physicalFolder.Trim().TrimEnd(new Char[] { '/', '\\' }), "\\");
+                relativePath = string.Concat(relativePath.Trim().Trim(new Char[] { '/', '\\' }), "/");
 
-				_file.SaveAs(fileLocalPath + _absPath);
-				_absPath = _absPath.Replace("\\", "/");
-			}
-			catch (Exception ex)
-			{
-				throw new Exception("保存文件'" + fileLocalPath + "'失败。错误信息：" + ex.Message);
-			}
-		}
-		#endregion
+                string _relativePath = relativePath.Replace("/", "\\");
 
-		#region 文件下载的方法
-		/// <summary>
-		/// 文件下载的方法
-		/// </summary>
-		/// <param name="FullFileName">完整文件名</param>
-		/// <param name="RealFileName">下载显示的文件名</param>
-		public static void FileDownload(string FullFileName, string RealFileName)
-		{
-			FileInfo DownloadFile = new FileInfo(FullFileName);
-			HttpContext.Current.Response.Clear();
-			HttpContext.Current.Response.ClearHeaders();
-			HttpContext.Current.Response.Buffer = false;
-			HttpContext.Current.Response.ContentType = "application/octet-stream";
-			HttpContext.Current.Response.AppendHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(RealFileName, Encoding.UTF8));
-			HttpContext.Current.Response.AppendHeader("Content-Length", DownloadFile.Length.ToString());
-			HttpContext.Current.Response.WriteFile(DownloadFile.FullName);
-			HttpContext.Current.Response.Flush();
-			HttpContext.Current.Response.End();
-		}
-		#endregion
+                if(!Directory.Exists(Path.Combine(physicalFolder, _relativePath)))
+                    Directory.CreateDirectory(Path.Combine(physicalFolder, _relativePath));
 
-		#region 删除文件夹及其旗下所有文件
-		/// <summary>
-		/// 删除文件夹及其旗下所有文件
-		/// </summary>
-		/// <param name="dir"></param>
-		public static void DeleteFolder(string dir)
-		{
-			try
-			{
-				foreach (string d in Directory.GetFileSystemEntries(dir))
-				{
-					if (File.Exists(d))
-					{
-						FileInfo fi = new FileInfo(d);
-						if (fi.Attributes.ToString().IndexOf("ReadOnly") != -1)
-							fi.Attributes = FileAttributes.Normal;
-						File.Delete(d);//直接删除其中的文件   
-					}
-					else
-					{
-						DeleteFolder(d);//递归删除子文件夹   
-					}
-				}
-				Directory.Delete(dir);//删除已空文件夹  
-			}
-			catch { }
-		}
+                file.SaveAs(Path.Combine(physicalFolder, _relativePath, fileName + suffixName));
+                relativePath = Path.Combine(relativePath, fileName + suffixName);
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("保存文件'" + physicalFolder + "'失败。错误信息：" + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 保存上传文件的方法
+        /// </summary>
+        /// <param name="file">要保存的文件</param>
+        /// <param name="physicalFolder">保存到物理文件夹（示例：D:\WebSite\MyWeb\）</param>
+        /// <param name="relativePath">基于物理文件夹下的相对路径（示例：/Upload/MyFiles/）</param>
+        /// <param name="namingRules">文件命名规则</param>
+        /// <returns>是否保存成功</returns>
+        public static bool SaveFileToServer(HttpPostedFileBase file, string physicalFolder, ref string relativePath, NamingRules namingRules = NamingRules.Guid)
+        {
+            if(null == file) throw new ArgumentNullException("file参数为空");
+            if(string.IsNullOrWhiteSpace(physicalFolder)) throw new ArgumentNullException("physicalFolder参数为空");
+            try
+            {
+                string suffixName = GetSuffix(file.FileName);
+                string fileName = string.Empty;
+                switch(namingRules)
+                {
+                    case NamingRules.Guid: fileName = Guid.NewGuid().ToString(); break;
+                    case NamingRules.GuidWithoutCrossLine: fileName = Guid.NewGuid().ToString().Replace("-", ""); break;
+                    case NamingRules.DateTime: fileName = DateTime.Now.ToString("yyyyMMddHHmmssffffff"); break;
+                    case NamingRules.OriginalFileName: fileName = Path.GetFileNameWithoutExtension(file.FileName); break;
+                    case NamingRules.FromRelativePath:
+                        if(string.IsNullOrWhiteSpace(relativePath)) throw new ArgumentNullException("relativePath参数为空");
+                        suffixName = Path.GetExtension(relativePath);
+                        fileName = Path.GetFileNameWithoutExtension(relativePath);
+                        if(string.IsNullOrWhiteSpace(suffixName) || string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException("当前命名规则下relativePath参数必需包含完整文件名");
+                        break;
+                }
+
+                physicalFolder = string.Concat(physicalFolder.Trim().TrimEnd(new Char[] { '/', '\\' }), "\\");
+                relativePath = string.Concat(relativePath.Trim().Trim(new Char[] { '/', '\\' }), "/");
+
+                string _relativePath = relativePath.Replace("/", "\\");
+                
+                if(!Directory.Exists(Path.Combine(physicalFolder, _relativePath)))
+                    Directory.CreateDirectory(Path.Combine(physicalFolder, _relativePath));
+
+                file.SaveAs(Path.Combine(physicalFolder, _relativePath, fileName + suffixName));
+                relativePath = Path.Combine(relativePath, fileName + suffixName);
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("保存文件'" + physicalFolder + "'失败。错误信息：" + ex.Message);
+            }
+        }
+        /// <summary>
+        /// 文件命名规则 Naming rules
+        /// </summary>
+        public enum NamingRules : byte
+        {
+            /// <summary>
+            /// NewGuid
+            /// </summary>
+            Guid = 0,
+            /// <summary>
+            /// Guid without a cross line
+            /// </summary>
+            GuidWithoutCrossLine = 1,
+            /// <summary>
+            /// DateTime
+            /// </summary>
+            DateTime = 2,
+            /// <summary>
+            /// OriginalFileName
+            /// </summary>
+            OriginalFileName = 3,
+            /// <summary>
+            /// From RelativePath
+            /// </summary>
+            FromRelativePath = 4
+        }
+
+        /// <summary>
+        /// 保存上传文件的方法
+        /// </summary>
+        /// <param name="file">要保存的文件</param>
+        /// <param name="physicalFolder">保存到物理文件夹（示例：D:\WebSite\MyWeb\）</param>
+        /// <param name="relativePath">基于物理文件夹下的相对路径（示例：/Upload/MyFiles/）</param>
+        /// <param name="namingRules">文件命名规则</param>
+        /// <returns>是否保存成功</returns>
+        public static bool SaveFileToServer(HttpPostedFileWrapper file, string physicalFolder, ref string relativePath, NamingRules namingRules = NamingRules.Guid)
+        {
+            return SaveFileToServer((HttpPostedFileBase)file, physicalFolder, ref relativePath, namingRules);
+        }
+        #endregion
+
+        #region 文件下载的方法
+        /// <summary>
+        /// 文件下载的方法
+        /// </summary>
+        /// <param name="FullFileName">完整文件名</param>
+        /// <param name="RealFileName">下载显示的文件名</param>
+        public static void FileDownload(string FullFileName, string RealFileName)
+        {
+            FileInfo DownloadFile = new FileInfo(FullFileName);
+            HttpContext.Current.Response.Clear();
+            HttpContext.Current.Response.ClearHeaders();
+            HttpContext.Current.Response.Buffer = false;
+            HttpContext.Current.Response.ContentType = "application/octet-stream";
+            HttpContext.Current.Response.AppendHeader("Content-Disposition", "attachment;filename=" + HttpUtility.UrlEncode(RealFileName, Encoding.UTF8));
+            HttpContext.Current.Response.AppendHeader("Content-Length", DownloadFile.Length.ToString());
+            HttpContext.Current.Response.WriteFile(DownloadFile.FullName);
+            HttpContext.Current.Response.Flush();
+            HttpContext.Current.Response.End();
+        }
+        #endregion
+
+        #region 删除文件夹及其旗下所有文件
+        /// <summary>
+        /// 删除文件夹及其旗下所有文件
+        /// </summary>
+        /// <param name="path">路径</param>
+        public static void DeleteFolder(string path)
+        {
+            try
+            {
+                foreach(string d in Directory.GetFileSystemEntries(path))
+                {
+                    if(File.Exists(d))
+                    {
+                        FileInfo fi = new FileInfo(d);
+                        if(fi.Attributes.ToString().IndexOf("ReadOnly") != -1)
+                            fi.Attributes = FileAttributes.Normal;
+                        File.Delete(d);//直接删除其中的文件   
+                    }
+                    else
+                    {
+                        DeleteFolder(d);//递归删除子文件夹   
+                    }
+                }
+                Directory.Delete(path);//删除已空文件夹  
+            }
+            catch { }
+        }
         #endregion
 
         #region 剪切文件到指定目录
