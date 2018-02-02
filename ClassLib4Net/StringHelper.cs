@@ -597,13 +597,60 @@ namespace ClassLib4Net
         {
             return Regex.Replace(source, "<[^>]*>", "");
         }
+        
+        ///<summary>   
+        ///清除HTML标记   
+        ///</summary>   
+        ///<param name="NoHTML">包括HTML的源码</param>   
+        ///<returns>已经去除后的文字</returns>   
+        public static string NoHTML(string Htmlstring)
+        {
+            if(!string.IsNullOrEmpty(Htmlstring))
+            {
 
-		/// <summary>
-		/// 清理URL字符串#及其后面部分 
-		/// </summary>
-		/// <param name="url"></param>
-		/// <returns></returns>
-		public static string CleanUrl(string url)
+
+                //删除脚本   
+                Htmlstring = Regex.Replace(Htmlstring, @"<script[^>]*?>.*?</script>", "", RegexOptions.IgnoreCase);
+
+                //删除HTML   
+                Regex regex = new Regex("<.+?>", RegexOptions.IgnoreCase);
+                Htmlstring = regex.Replace(Htmlstring, "");
+                Htmlstring = Regex.Replace(Htmlstring, @"<(.[^>]*)>", "", RegexOptions.IgnoreCase);
+                Htmlstring = Regex.Replace(Htmlstring, @"([\r\n])[\s]+", "", RegexOptions.IgnoreCase);
+                Htmlstring = Regex.Replace(Htmlstring, @"-->", "", RegexOptions.IgnoreCase);
+                Htmlstring = Regex.Replace(Htmlstring, @"<!--.*", "", RegexOptions.IgnoreCase);
+                Htmlstring = Regex.Replace(Htmlstring, @"&(quot|#34);", "\"", RegexOptions.IgnoreCase);
+                Htmlstring = Regex.Replace(Htmlstring, @"&(amp|#38);", "&", RegexOptions.IgnoreCase);
+                Htmlstring = Regex.Replace(Htmlstring, @"&(lt|#60);", "<", RegexOptions.IgnoreCase);
+                Htmlstring = Regex.Replace(Htmlstring, @"&(gt|#62);", ">", RegexOptions.IgnoreCase);
+                Htmlstring = Regex.Replace(Htmlstring, @"&(nbsp|#160);", "   ", RegexOptions.IgnoreCase);
+                Htmlstring = Regex.Replace(Htmlstring, @"&(iexcl|#161);", "\xa1", RegexOptions.IgnoreCase);
+                Htmlstring = Regex.Replace(Htmlstring, @"&(cent|#162);", "\xa2", RegexOptions.IgnoreCase);
+                Htmlstring = Regex.Replace(Htmlstring, @"&(pound|#163);", "\xa3", RegexOptions.IgnoreCase);
+                Htmlstring = Regex.Replace(Htmlstring, @"&(copy|#169);", "\xa9", RegexOptions.IgnoreCase);
+                Htmlstring = Regex.Replace(Htmlstring, @"&#(\d+);", "", RegexOptions.IgnoreCase);
+
+                //清除所有的标签
+                Htmlstring = Regex.Replace(Htmlstring, @"<.*?>", "", RegexOptions.IgnoreCase);
+                //去掉字符串开头和结尾的空格
+                Htmlstring = Htmlstring.Trim();
+                //去掉所有的空格
+                Htmlstring = Htmlstring.Replace("\\s+", "");
+
+                Htmlstring = Htmlstring.Replace("<", "");
+                Htmlstring = Htmlstring.Replace(">", "");
+                Htmlstring = Htmlstring.Replace("\r\n", "");
+                Htmlstring = Htmlstring.Replace(" ", "");
+            }
+            return Htmlstring;
+        }
+
+        /// <summary>
+        /// 清理URL字符串#及其后面部分 
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static string CleanUrl(string url)
 		{
 			if (string.IsNullOrWhiteSpace(url)) return string.Empty;
 			return Replace(url, @"(#.*|&[^=]*)$", ""); //清理url结尾的#……与以及多余的&
