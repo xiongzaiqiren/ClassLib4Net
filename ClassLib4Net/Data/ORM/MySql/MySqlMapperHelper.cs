@@ -384,7 +384,7 @@ namespace ClassLib4Net.Data.ORM.MySql
                 {
                     if(column.IsIdentity)
                     {
-                        if(id != DBNull.Value)
+                        if(null != id && DBNull.Value != id)
                         {
                             switch(p.PropertyType.Name)
                             {

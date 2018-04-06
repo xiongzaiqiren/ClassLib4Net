@@ -386,8 +386,16 @@ namespace ClassLib4Net.Data.ORM.SqlServer
                 {
                     if(column.IsIdentity)
                     {
-                        if(null!=id&& DBNull.Value!= id )
-                            p.SetValue(t, id);
+                        if(null != id && DBNull.Value != id)
+                        {
+                            switch(p.PropertyType.Name)
+                            {
+                                case "Int32": p.SetValue(t, Convert.ToInt32(id)); break;
+                                case "long":
+                                case "Int64": p.SetValue(t, Convert.ToInt64(id)); break;
+                                default: p.SetValue(t, id); break;
+                            }
+                        }
                     }
                     else
                         continue;
