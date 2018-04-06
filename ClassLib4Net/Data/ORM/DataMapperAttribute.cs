@@ -79,11 +79,25 @@ namespace ClassLib4Net.Data.ORM
     {
         public MappingType MappingType { get; set; }
         
+        /// <summary>
+        /// 是主键
+        /// </summary>
         public bool IsPrimaryKey { get; set; }
+        /// <summary>
+        /// 是外键
+        /// </summary>
         public bool IsForeignKey { get; set; }
+        /// <summary>
+        /// 是ID标识(自增标识)
+        /// </summary>
         public bool IsIdentity { get; set; }
-
+        /// <summary>
+        /// 可空
+        /// </summary>
         public bool CanNull { get; set; }
+        /// <summary>
+        /// 可自动初始化(默认值)
+        /// </summary>
         public bool CanDefaultValue { get; set; }
 
         /// <summary>

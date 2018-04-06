@@ -10,7 +10,7 @@ namespace ClassLib4Net.Data
 	/// The SqlHelper class is intended to encapsulate high performance, scalable best practices for 
 	/// common uses of SqlClient
 	/// </summary>
-	public sealed class SqlHelper
+	public sealed partial class SqlHelper
 	{
 		#region private utility methods & constructors
 

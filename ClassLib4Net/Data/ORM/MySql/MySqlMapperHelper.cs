@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -6,20 +7,18 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-
-
 /*
 * 简单的ORM框架
 * 熊学浩
-* 2016-11-15
+* 2018-03-28
 */
-namespace ClassLib4Net.Data.ORM.SqlServer
+namespace ClassLib4Net.Data.ORM.MySql
 {
     /// <summary>
-    /// SqlServer数据库映射
+    /// MySql数据库映射
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class SqlServerMapperHelper<T> : DataRowMapperHelper<T> where T : class
+    public class MySqlMapperHelper<T> : DataRowMapperHelper<T> where T : class
     {
         #region Load
         /// <summary>
@@ -28,7 +27,7 @@ namespace ClassLib4Net.Data.ORM.SqlServer
         /// <param name="columnName"></param>
         /// <param name="reader"></param>
         /// <returns></returns>
-        protected virtual bool IsExistingColumn(string columnName, SqlDataReader reader)
+        protected virtual bool IsExistingColumn(string columnName, MySqlDataReader reader)
         {
             for(int i = 0; i < reader.VisibleFieldCount && i < reader.FieldCount; i++)
             {
@@ -43,14 +42,14 @@ namespace ClassLib4Net.Data.ORM.SqlServer
         /// </summary>
         /// <param name="t">object</param>
         /// <param name="reader">使用前必须 reader.Read()</param>
-        protected virtual void DoLoad(T t, SqlDataReader reader)
+        protected virtual void DoLoad(T t, MySqlDataReader reader)
         {
             object o = null;
             foreach(var p in t.GetType().GetProperties())
             {
                 if(null != p && p.CanWrite)
                 {
-                    SqlServerColumnMapperAttribute column = SqlServerColumnMapperHelper<T>.GetCustomAttribute(p);
+                    MySqlColumnMapperAttribute column = MySqlColumnMapperHelper<T>.GetCustomAttribute(p);
                     if(null != column)
                     {
                         if(column.CanLoad)
@@ -68,22 +67,22 @@ namespace ClassLib4Net.Data.ORM.SqlServer
             }
         }
         /// <summary>
-        /// 从SqlDataReader装载对象
+        /// 从MySqlDataReader装载对象
         /// </summary>
         /// <param name="reader">使用前必须 reader.Read()</param>
         /// <returns></returns>
-        public T Load(SqlDataReader reader)
+        public T Load(MySqlDataReader reader)
         {
             T t = CreateDomainObject();
             DoLoad(t, reader);
             return t;
         }
         /// <summary>
-        /// 从SqlDataReader装载对象
+        /// 从MySqlDataReader装载对象
         /// </summary>
         /// <param name="reader">data reader</param>
         /// <returns>object list</returns>
-        public virtual IList<T> LoadAll(SqlDataReader reader)
+        public virtual IList<T> LoadAll(MySqlDataReader reader)
         {
             IList<T> domainObjects = new List<T>();
             while(reader.Read())
@@ -132,19 +131,19 @@ namespace ClassLib4Net.Data.ORM.SqlServer
         }
         #endregion
 
-        public string[] columnNameSign = new string[2] { "[", "]" };
-        public string paramNameSign = "@";
+        public string[] columnNameSign = new string[2] { "`", "`" }; //键盘Tab上面那个键
+        public string paramNameSign = "?"; //参数化查询，MySql用"?参数名"形式，MSSql用"@参数名"形式
 
-        public SqlServerMapperHelper() { }
-        public SqlServerMapperHelper(string connectionString)
+        public MySqlMapperHelper() { }
+        public MySqlMapperHelper(string connectionString)
         {
             DBConnectionString = connectionString;
         }
-        public SqlServerMapperHelper(T t)
+        public MySqlMapperHelper(T t)
         {
             _entity = t;
         }
-        public SqlServerMapperHelper(T t, string connectionString)
+        public MySqlMapperHelper(T t, string connectionString)
         {
             _entity = t;
             DBConnectionString = connectionString;
@@ -159,7 +158,7 @@ namespace ClassLib4Net.Data.ORM.SqlServer
             {
                 if(null != p && p.CanWrite)
                 {
-                    SqlServerColumnMapperAttribute column = SqlServerColumnMapperHelper<T>.GetCustomAttribute(p);
+                    MySqlColumnMapperAttribute column = MySqlColumnMapperHelper<T>.GetCustomAttribute(p);
                     if(null != column && column.CanLoad)
                     {
                         string columnName = string.IsNullOrWhiteSpace(column.Name) ? p.Name : column.Name;
@@ -196,7 +195,7 @@ namespace ClassLib4Net.Data.ORM.SqlServer
                 {
                     if(string.Compare(propertyName, p.Name) == 0)
                     {
-                        SqlServerColumnMapperAttribute column = SqlServerColumnMapperHelper<T>.GetCustomAttribute(p);
+                        MySqlColumnMapperAttribute column = MySqlColumnMapperHelper<T>.GetCustomAttribute(p);
                         if(null != column)
                         {
                             string columnName = string.IsNullOrWhiteSpace(column.Name) ? p.Name : column.Name;
@@ -210,27 +209,33 @@ namespace ClassLib4Net.Data.ORM.SqlServer
         #endregion
 
         #region ScheduledCommands
-        protected virtual string GetInsertCommand(T t, out string IdentityParameterName, out IList<SqlParameter> parameters)
+        protected virtual string GetInsertCommand(T t, out string IdentityParameterName, out IList<MySqlParameter> parameters)
         {
             IdentityParameterName = string.Empty;
-            parameters = new List<SqlParameter>();
+            parameters = new List<MySqlParameter>();
             if(null == t) return string.Empty;
 
             string IdentityColumn = string.Empty;
-            SqlParameter parameter;
+            MySqlParameter parameter;
             StringBuilder columns = new StringBuilder();
             StringBuilder parameterColumns = new StringBuilder();
             foreach(PropertyInfo p in ((TypeInfo)(t.GetType())).DeclaredProperties)
             {
-                SqlServerColumnMapperAttribute column = SqlServerColumnMapperHelper<T>.GetCustomAttribute(p);
+                MySqlColumnMapperAttribute column = MySqlColumnMapperHelper<T>.GetCustomAttribute(p);
                 if(null != column)
                 {
                     if(column.CanInsert)
                     {
-                        if(column.CanDefaultValue || column.IsIdentity) continue;
+                        if(column.IsIdentity)
+                        {
+                            IdentityColumn = string.IsNullOrWhiteSpace(column.Name) ? p.Name : column.Name;
+                            //IdentityParameterName = string.Format(paramNameSign + "{0}", IdentityColumn);
+                            IdentityParameterName = string.Format("@" + "{0}", IdentityColumn);
+                            parameters.Add(new MySqlParameter() { ParameterName = IdentityParameterName, MySqlDbType = column.DbType, Direction = ParameterDirection.Output });
+                        }
                         else
                         {
-                            parameter = new SqlParameter() { ParameterName = string.Format(paramNameSign + "{0}", string.IsNullOrWhiteSpace(column.Name) ? p.Name : column.Name), SqlDbType = column.DbType };
+                            parameter = new MySqlParameter() { ParameterName = string.Format(paramNameSign + "{0}", string.IsNullOrWhiteSpace(column.Name) ? p.Name : column.Name), MySqlDbType = column.DbType };
                             object _value = p.GetValue(t);
                             if(null == _value || DBNull.Value == _value)
                             {
@@ -251,19 +256,12 @@ namespace ClassLib4Net.Data.ORM.SqlServer
                             parameters.Add(parameter);
                         }
                     }
-
-                    if(column.IsIdentity)
-                    {
-                        IdentityColumn = string.IsNullOrWhiteSpace(column.Name) ? p.Name : column.Name;
-                        IdentityParameterName = string.Format(paramNameSign + "{0}", IdentityColumn);
-                        parameters.Add(new SqlParameter() { ParameterName = IdentityParameterName, SqlDbType = column.DbType, Direction = ParameterDirection.Output });
-                    }
                 }
             }
 
             if(null != parameters && parameters.Count > 0)
             {
-                return string.Format("INSERT INTO {0} ({1}) VALUES ({2});", tableName, columns.ToString().Trim(new Char[] { ' ', ',' }), parameterColumns.ToString().Trim(new Char[] { ' ', ',' })) + (string.IsNullOrWhiteSpace(IdentityParameterName) ? string.Empty : string.Format("SELECT {0}=SCOPE_IDENTITY();", IdentityParameterName));
+                return string.Format("INSERT INTO {0} ({1}) VALUES ({2});", tableName, columns.ToString().Trim(new Char[] { ' ', ',' }), parameterColumns.ToString().Trim(new Char[] { ' ', ',' })) + (string.IsNullOrWhiteSpace(IdentityParameterName) ? string.Empty : string.Format("SELECT LAST_INSERT_ID();", IdentityColumn));//string.Format("SELECT {0}=LAST_INSERT_ID();", IdentityParameterName));
             }
             return string.Empty;
         }
@@ -276,7 +274,7 @@ namespace ClassLib4Net.Data.ORM.SqlServer
             {
                 if(null != p && p.CanWrite)
                 {
-                    SqlServerColumnMapperAttribute column = SqlServerColumnMapperHelper<T>.GetCustomAttribute(p);
+                    MySqlColumnMapperAttribute column = MySqlColumnMapperHelper<T>.GetCustomAttribute(p);
                     if(null != column && column.CanLoad)
                     {
                         columns.AppendFormat("{0},", string.Concat(columnNameSign[0], (string.IsNullOrWhiteSpace(column.Name) ? p.Name : column.Name), columnNameSign[1]));
@@ -286,22 +284,22 @@ namespace ClassLib4Net.Data.ORM.SqlServer
 
             return string.Format("SELECT {0} FROM {1};", columns.ToString().Trim(new Char[] { ' ', ',' }), tableName);
         }
-        protected virtual string GetUpdateCommand(T t, out IList<SqlParameter> parameters)
+        protected virtual string GetUpdateCommand(T t, out IList<MySqlParameter> parameters)
         {
-            parameters = new List<SqlParameter>();
+            parameters = new List<MySqlParameter>();
             if(null == t) return string.Empty;
 
-            SqlParameter parameter;
+            MySqlParameter parameter;
             StringBuilder wherecolumns = new StringBuilder();
             StringBuilder parameterColumns = new StringBuilder();
 
             bool existPrimaryKeyOrIdentity = false;
             foreach(PropertyInfo p in ((TypeInfo)(t.GetType())).DeclaredProperties)
             {
-                SqlServerColumnMapperAttribute column = SqlServerColumnMapperHelper<T>.GetCustomAttribute(p);
+                MySqlColumnMapperAttribute column = MySqlColumnMapperHelper<T>.GetCustomAttribute(p);
                 if(null != column)
                 {
-                    parameter = new SqlParameter() { SourceColumn = (string.IsNullOrWhiteSpace(column.Name) ? p.Name : column.Name), SqlDbType = column.DbType };
+                    parameter = new MySqlParameter() { SourceColumn = (string.IsNullOrWhiteSpace(column.Name) ? p.Name : column.Name), MySqlDbType = column.DbType };
                     parameter.ParameterName = string.Format(paramNameSign + "{0}", parameter.SourceColumn);
 
                     object _value = p.GetValue(t);
@@ -354,13 +352,13 @@ namespace ClassLib4Net.Data.ORM.SqlServer
         #endregion
 
         #region ExecuteCommands
-        public int Insert(T t)
+        public object Insert(T t)
         {
             string IdentityParameterName;
-            IList<SqlParameter> parameters;
+            IList<MySqlParameter> parameters;
             string commandText = GetInsertCommand(t, out IdentityParameterName, out parameters);
-            int result = SqlHelper.ExecuteNonQuery(DBConnectionString, CommandType.Text, commandText, parameters.ToArray());
-            //object result = NpgsqlHelper.ExecuteScalar(DBConnectionString, CommandType.Text, commandText, parameters.ToArray());
+            //int result = MySqlHelper.ExecuteNonQuery(DBConnectionString, CommandType.Text, commandText, parameters.ToArray());
+            object result = MySqlHelper.ExecuteScalar(DBConnectionString, CommandType.Text, commandText, parameters.ToArray());
             object id = null;
             if(!string.IsNullOrWhiteSpace(IdentityParameterName))
             {
@@ -375,19 +373,27 @@ namespace ClassLib4Net.Data.ORM.SqlServer
                 }
             }
 
-            //if (null == id || DBNull.Value == id)
-            //    if (null != result && result != DBNull.Value)
-            //        id = result;
+            if(null == id || DBNull.Value == id)
+                if(null != result && result != DBNull.Value)
+                    id = result;
 
             foreach(PropertyInfo p in ((TypeInfo)(t.GetType())).DeclaredProperties)
             {
-                SqlServerColumnMapperAttribute column = SqlServerColumnMapperHelper<T>.GetCustomAttribute(p);
+                MySqlColumnMapperAttribute column = MySqlColumnMapperHelper<T>.GetCustomAttribute(p);
                 if(null != column)
                 {
                     if(column.IsIdentity)
                     {
-                        if(null!=id&& DBNull.Value!= id )
-                            p.SetValue(t, id);
+                        if(id != DBNull.Value)
+                        {
+                            switch(p.PropertyType.Name)
+                            {
+                                case "Int32": p.SetValue(t, Convert.ToInt32(id)); break;
+                                case "long":
+                                case "Int64": p.SetValue(t, Convert.ToInt64(id)); break;
+                                default: p.SetValue(t, id); break;
+                            }
+                        }
                     }
                     else
                         continue;
@@ -400,7 +406,7 @@ namespace ClassLib4Net.Data.ORM.SqlServer
         public IList<T> LoadAll()
         {
             IList<T> list = new List<T>();
-            using(SqlDataReader reader = SqlHelper.ExecuteReader(DBConnectionString, CommandType.Text, GetSelectAllCommand()))
+            using(MySqlDataReader reader = MySqlHelper.ExecuteDataReader(DBConnectionString, CommandType.Text, GetSelectAllCommand()))
             {
                 list = LoadAll(reader);
             }
@@ -409,9 +415,9 @@ namespace ClassLib4Net.Data.ORM.SqlServer
 
         public int Update(T t)
         {
-            IList<SqlParameter> parameters;
+            IList<MySqlParameter> parameters;
             string commandText = GetUpdateCommand(t, out parameters);
-            int result = SqlHelper.ExecuteNonQuery(DBConnectionString, CommandType.Text, commandText, parameters.ToArray());
+            int result = MySqlHelper.ExecuteNonQuery(DBConnectionString, CommandType.Text, commandText, parameters.ToArray());
             return result;
         }
 

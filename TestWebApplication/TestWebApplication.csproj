@@ -126,6 +126,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\ApiController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MySqlController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -164,8 +165,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Api\" />
+    <Folder Include="Views\MySql\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ClassLib4Net.Sample\ClassLib4Net.Sample.csproj">
+      <Project>{4773e412-3a79-479e-a016-c888d43c1c72}</Project>
+      <Name>ClassLib4Net.Sample</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ClassLib4Net\ClassLib4Net.csproj">
       <Project>{2ebf5d23-261d-4aba-b74c-c6ed1b8ecde6}</Project>
       <Name>ClassLib4Net</Name>

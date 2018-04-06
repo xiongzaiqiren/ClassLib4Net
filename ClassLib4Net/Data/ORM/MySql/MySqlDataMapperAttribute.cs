@@ -1,27 +1,28 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Data;
 using System.Reflection;
 
 /*
 * 简单的ORM框架
 * 熊学浩
-* 2016-11-15
+* 2018-3-28
 */
-namespace ClassLib4Net.Data.ORM.SqlServer
+namespace ClassLib4Net.Data.ORM.MySql
 {
-    class SqlServerDataMapperAttribute
+    class MySqlDataMapperAttribute
     {
     }
 
     #region MapperAttribute
     /// <summary>
-    /// SqlServer数据表映射属性
+    /// MySql数据表映射属性
     /// </summary>
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
-    public class SqlServerTableMapperAttribute : DataTableMapperAttribute
+    public class MySqlTableMapperAttribute : DataTableMapperAttribute
     {
         /// <summary>
-        /// SqlServer数据表映射属性构造函数
+        /// MySql数据表映射属性构造函数
         /// </summary>
         /// <param name="LoadMode">数据加载模式</param>
         /// <param name="Name">名称</param>
@@ -29,24 +30,24 @@ namespace ClassLib4Net.Data.ORM.SqlServer
         /// <param name="CanInsert">是否可插入</param>
         /// <param name="CanUpdate">是否可更新</param>
         /// <param name="CanDelete">是否可删除</param>
-        public SqlServerTableMapperAttribute(LoadDataMode LoadMode, string Name, long Size = 0, string Describe = null, bool CanLoad = true, bool CanInsert = true, bool CanUpdate = true, bool CanDelete = false) : base(LoadMode, Name, Size, Describe, CanLoad, CanInsert, CanUpdate, CanDelete)
+        public MySqlTableMapperAttribute(LoadDataMode LoadMode, string Name, long Size = 0, string Describe = null, bool CanLoad = true, bool CanInsert = true, bool CanUpdate = true, bool CanDelete = false) : base(LoadMode, Name, Size, Describe, CanLoad, CanInsert, CanUpdate, CanDelete)
         {
         }
     }
 
     /// <summary>
-    /// SqlServer数据表字段映射属性
+    /// MySql数据表字段映射属性
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public class SqlServerColumnMapperAttribute : DataColumnMapperAttribute
+    public class MySqlColumnMapperAttribute : DataColumnMapperAttribute
     {
         /// <summary>
         /// 字段类型
         /// </summary>
-        public SqlDbType DbType { get; set; }
+        public MySqlDbType DbType { get; set; }
 
         /// <summary>
-        /// SqlServer数据表字段映射属性构造函数
+        /// MySql数据表字段映射属性构造函数
         /// </summary>
         /// <param name="DbType">对应数据库类型</param>
         /// <param name="Size">大小(容量)</param>
@@ -62,7 +63,7 @@ namespace ClassLib4Net.Data.ORM.SqlServer
         /// <param name="CanInsert">可插入(INSERT)</param>
         /// <param name="CanUpdate">可修改(UPDATE)</param>
         /// <param name="CanDelete">可删除(DELETE)</param>
-        public SqlServerColumnMapperAttribute(SqlDbType DbType, long Size = 50, bool CanNull = true, bool IsPrimaryKey = false, bool IsForeignKey = false, bool IsIdentity = false, bool CanDefaultValue = false, MappingType MappingType = MappingType.Attribute, string Name = null, string Describe = null, bool CanLoad = true, bool CanInsert = true, bool CanUpdate = true, bool CanDelete = false) : base(Size, MappingType, IsPrimaryKey, IsForeignKey, IsIdentity, CanNull, CanDefaultValue, Name, Describe, CanLoad, CanInsert, CanUpdate, CanDelete)
+        public MySqlColumnMapperAttribute(MySqlDbType DbType, long Size = 50, bool CanNull = true, bool IsPrimaryKey = false, bool IsForeignKey = false, bool IsIdentity = false, bool CanDefaultValue = false, MappingType MappingType = MappingType.Attribute, string Name = null, string Describe = null, bool CanLoad = true, bool CanInsert = true, bool CanUpdate = true, bool CanDelete = false) : base(Size, MappingType, IsPrimaryKey, IsForeignKey, IsIdentity, CanNull, CanDefaultValue, Name, Describe, CanLoad, CanInsert, CanUpdate, CanDelete)
         {
             this.DbType = DbType;
         }
@@ -72,20 +73,20 @@ namespace ClassLib4Net.Data.ORM.SqlServer
 
     #region MapperHelper
     /// <summary>
-    /// SqlServer数据表映射助手
+    /// MySql数据表映射助手
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class SqlServerTableMapperHelper<T> where T : class
+    public class MySqlTableMapperHelper<T> where T : class
     {
         /// <summary>
         /// 获取自定义属性集合
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        public static SqlServerTableMapperAttribute[] GetCustomAttributes(T t)
+        public static MySqlTableMapperAttribute[] GetCustomAttributes(T t)
         {
-            SqlServerTableMapperAttribute[] os = null;
-            os = (SqlServerTableMapperAttribute[])t.GetType().GetCustomAttributes(typeof(SqlServerTableMapperAttribute), false);
+            MySqlTableMapperAttribute[] os = null;
+            os = (MySqlTableMapperAttribute[])t.GetType().GetCustomAttributes(typeof(MySqlTableMapperAttribute), false);
             return os;
         }
         /// <summary>
@@ -93,30 +94,30 @@ namespace ClassLib4Net.Data.ORM.SqlServer
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        public static SqlServerTableMapperAttribute GetCustomAttribute(T t)
+        public static MySqlTableMapperAttribute GetCustomAttribute(T t)
         {
-            SqlServerTableMapperAttribute[] os = GetCustomAttributes(t);
-            if (null != os && os.Length > 0)
+            MySqlTableMapperAttribute[] os = GetCustomAttributes(t);
+            if(null != os && os.Length > 0)
                 return os[0];
             return null;
         }
     }
 
     /// <summary>
-    /// SqlServer数据表字段映射助手
+    /// MySql数据表字段映射助手
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class SqlServerColumnMapperHelper<T> where T : class
+    public class MySqlColumnMapperHelper<T> where T : class
     {
         /// <summary>
         /// 获取自定义属性集合
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        public static SqlServerColumnMapperAttribute[] GetCustomAttributes(T t)
+        public static MySqlColumnMapperAttribute[] GetCustomAttributes(T t)
         {
-            SqlServerColumnMapperAttribute[] os = null;
-            os = (SqlServerColumnMapperAttribute[])t.GetType().GetCustomAttributes(typeof(SqlServerColumnMapperAttribute), false);
+            MySqlColumnMapperAttribute[] os = null;
+            os = (MySqlColumnMapperAttribute[])t.GetType().GetCustomAttributes(typeof(MySqlColumnMapperAttribute), false);
             return os;
         }
         /// <summary>
@@ -124,10 +125,10 @@ namespace ClassLib4Net.Data.ORM.SqlServer
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        public static SqlServerColumnMapperAttribute GetCustomAttribute(T t)
+        public static MySqlColumnMapperAttribute GetCustomAttribute(T t)
         {
-            SqlServerColumnMapperAttribute[] os = GetCustomAttributes(t);
-            if (null != os && os.Length > 0)
+            MySqlColumnMapperAttribute[] os = GetCustomAttributes(t);
+            if(null != os && os.Length > 0)
                 return os[0];
             return null;
         }
@@ -137,10 +138,10 @@ namespace ClassLib4Net.Data.ORM.SqlServer
         /// </summary>
         /// <param name="PropertyInfo"></param>
         /// <returns></returns>
-        public static SqlServerColumnMapperAttribute[] GetCustomAttributes(PropertyInfo PropertyInfo)
+        public static MySqlColumnMapperAttribute[] GetCustomAttributes(PropertyInfo PropertyInfo)
         {
-            SqlServerColumnMapperAttribute[] os = null;
-            os = (SqlServerColumnMapperAttribute[])PropertyInfo.GetCustomAttributes(typeof(SqlServerColumnMapperAttribute), false);
+            MySqlColumnMapperAttribute[] os = null;
+            os = (MySqlColumnMapperAttribute[])PropertyInfo.GetCustomAttributes(typeof(MySqlColumnMapperAttribute), false);
             return os;
         }
         /// <summary>
@@ -148,10 +149,10 @@ namespace ClassLib4Net.Data.ORM.SqlServer
         /// </summary>
         /// <param name="PropertyInfo"></param>
         /// <returns></returns>
-        public static SqlServerColumnMapperAttribute GetCustomAttribute(PropertyInfo PropertyInfo)
+        public static MySqlColumnMapperAttribute GetCustomAttribute(PropertyInfo PropertyInfo)
         {
-            SqlServerColumnMapperAttribute[] os = GetCustomAttributes(PropertyInfo);
-            if (null != os && os.Length > 0)
+            MySqlColumnMapperAttribute[] os = GetCustomAttributes(PropertyInfo);
+            if(null != os && os.Length > 0)
                 return os[0];
             return null;
         }
