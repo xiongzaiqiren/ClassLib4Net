@@ -66,7 +66,7 @@ namespace ClassLib4Net.Sample.Data.ORM.Npgsql.DAL.Provider
             if(null == result)
                 return false;
             else
-                return Lib.ConvertHelper.GetInteger(result) > 0;
+                return ConvertHelper.GetInteger(result) > 0;
         }
 
         public wxuser LoadByWX_Openid(string wx_openid)
