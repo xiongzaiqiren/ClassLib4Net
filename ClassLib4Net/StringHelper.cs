@@ -655,6 +655,32 @@ namespace ClassLib4Net
 			if (string.IsNullOrWhiteSpace(url)) return string.Empty;
 			return Replace(url, @"(#.*|&[^=]*)$", ""); //清理url结尾的#……与以及多余的&
 		}
+
+        /// <summary>
+        /// 操作Url参数，如果url存在指定名称参数就替换，否则追加该参数。
+        /// </summary>
+        /// <param name="url">原URL</param>
+        /// <param name="ParamName">参数名</param>
+        /// <param name="ParamValue">参数值</param>
+        /// <returns></returns>
+        public static string BuildUrl(string url, string ParamName, string ParamValue)
+        {
+            if(string.IsNullOrWhiteSpace(ParamName)) return url;
+            if(string.IsNullOrWhiteSpace(url)) return string.Format("?{0}={1}", ParamName, ParamValue);//?
+
+            Regex reg = new Regex(string.Format("{0}=[^&]*", ParamName), RegexOptions.IgnoreCase);
+            Regex reg1 = new Regex("[&]{2,}", RegexOptions.IgnoreCase);
+            string _url = reg.Replace(url, "");
+            //_url = reg1.Replace(_url, "");
+            if(_url.IndexOf("?") == -1)
+                _url += string.Format("?{0}={1}", ParamName, ParamValue);//?
+            else
+                _url += string.Format("&{0}={1}", ParamName, ParamValue);//&
+            _url = reg1.Replace(_url, "&");
+            _url = _url.Replace("?&", "?");
+            return _url;
+        }
+
         #endregion
 
         #region 读取指定URL的内容
