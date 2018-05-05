@@ -118,6 +118,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\测试数据.txt" />
+    <Content Include="Content\Pager.css" />
+    <Content Include="Content\logo.jpg" />
     <Content Include="Global.asax" />
     <Content Include="Models\测试模型.txt" />
     <Content Include="Web.config">
@@ -128,6 +130,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\ApiController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ListController.cs" />
     <Compile Include="Controllers\MySqlController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -158,6 +161,7 @@
     <Content Include="Views\Home\Cookie.cshtml" />
     <Content Include="Handler\ValidateImg.ashx" />
     <Content Include="Handler\QRCode.ashx" />
+    <Content Include="Views\List\SampleForPagering.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

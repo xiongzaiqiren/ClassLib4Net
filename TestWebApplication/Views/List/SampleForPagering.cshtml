@@ -1,0 +1,40 @@
+﻿@model ClassLib4Net.Api.ApiListModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>SampleForPagering</title>
+
+    <!--链接分页样式-->
+    <link href="@Url.Content("~/Content/Pager.css")" rel="stylesheet" type="text/css" />
+
+</head>
+<body>
+    <!--分页控件-开始-->
+    @Html.Pager((int)Model.PageIndex, (int)Model.PageSize, (int)Model.Total, this.Request.Url.ToString())
+    <!--分页控件-结束-->
+
+    <!--分页控件-开始-->
+    @Html.Pager(new Pager((int)Model.PageIndex, (int)Model.PageSize, (int)Model.Total, this.Request.Url.ToString()) { ShowJumpTo = false })
+    <!--分页控件-结束-->
+
+    <!--分页控件-开始-->
+    @Html.Pager(new Pager((int)Model.PageIndex, (int)Model.PageSize, (int)Model.Total, this.Request.Url.ToString()) { ShowJumpTo = false, homePage = "", endPage = "" })
+    <!--分页控件-结束-->
+
+    <!--分页控件-开始-->
+    @Html.Pager(new Pager((int)Model.PageIndex, (int)Model.PageSize, (int)Model.Total, this.Request.Url.ToString()) { ShowJumpTo = false, ShowTotalPage = false, ShowTotalRecord = false, homePage = "", endPage = "" })
+    <!--分页控件-结束-->
+
+    <!--分页控件-开始-->
+    @Html.Pager(new Pager((int)Model.PageIndex, (int)Model.PageSize, (int)Model.Total, this.Request.Url.ToString()) { PageIndexParamName = "PageIndex", PageNum = 5, homePage = "<<", PreviousPage = "<", nextPage = ">", endPage = ">>", TotalText = "Total", TotalPageText = "Page", TotalRecordText = "Line", JumpToText = "Jump To", JumpToBtnText = "Go", ShowJumpTo = false })
+    <!--分页控件-结束-->
+
+</body>
+</html>

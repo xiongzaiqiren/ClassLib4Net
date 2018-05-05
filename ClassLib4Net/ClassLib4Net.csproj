@@ -167,6 +167,7 @@
     <Compile Include="MsmqRount\CommonPlatformConfiurationSectionHandler.cs" />
     <Compile Include="MsmqRount\MsmqConfig.cs" />
     <Compile Include="MsmqRount\MultiMessageAddressRount.cs" />
+    <Compile Include="MVCControl\Pager.cs" />
     <Compile Include="ObjectHelper.cs" />
     <Compile Include="PinYinHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -186,6 +187,10 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="MVCControl\Pager.css" />
+    <Content Include="MVCControl\使用示例.jpg" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

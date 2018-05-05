@@ -1,0 +1,45 @@
+/* 
+* Pager CSS
+* @Author: xiongzaiqiren -> https://hbdd.taobao.com/
+* @Date:   2013-09-18 14:17:35
+* @Last Modified by:   xiongzaiqiren
+* @Last Modified time: 2018-05-06 01:44:32
+*/
+
+/*@charset "utf-8";*/
+.AspNetPager{width:100%; height:30px;text-align:center;font-weight:bold;}
+.AspNetPager a
+{
+    margin-left:5px;
+    color:#0063dc;
+    border:1px solid #cccccc;
+    display:block;
+    width:auto;
+    height:22px;
+    padding:0px 3px 0px 3px;
+    min-width:16px;
+    float:left;
+    text-align:center;
+    line-height:22px;
+    text-decoration:none;
+    font-size:12px;
+}
+
+.AspNetPager a:hover, .AspNetPager a:active, .AspNetPager a:focus {color:#ff6600;border:1px solid #ff6600;text-decoration:none;}
+.AspNetPager a:not(.disabled){}
+.AspNetPager .parts{height:22px;line-height:22px;font-size:12px;}
+.AspNetPager .parts font{color:#ff6600;}
+.AspNetPager input{padding:0 0;margin:0 auto;box-sizing:content-box;border:1px solid #a9a9a9;height:22px;line-height:22px;font-size:12px;    font-weight: bold;}
+.AspNetPager input[type="text"]{padding: 0px 3px;border-right:none;}
+.AspNetPager input[type="button"]{padding:0px 5px;border-left:none;cursor:pointer;}
+
+.AspNetPager .current{color:#ff6600;background-color:#ffeee5;border:1px solid #ff6600;font-weight:700;}
+
+.AspNetPager .disabled {
+    color: #929598;
+    border: 1px solid #cccccc;
+    pointer-events: none;
+    filter: alpha(opacity=50); /*IEÂË¾µ£¬Í¸Ã÷¶È50%*/
+    -moz-opacity: 0.5; /*FirefoxË½ÓÐ£¬Í¸Ã÷¶È50%*/
+    opacity: 0.5; /*ÆäËû£¬Í¸Ã÷¶È50%*/
+}
