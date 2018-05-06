@@ -61,7 +61,7 @@ namespace System.Web.Mvc
         /// </summary>
         public int CurrentPageIndex { get; set; }
         /// <summary>
-        /// 显示页码的数目
+        /// 显示页码的数目,建议值:3,5,7,9...
         /// </summary>
         public int PageNum { get; set; } = 5;
 
@@ -339,7 +339,7 @@ namespace System.Web.Mvc
                 if(pager.CurrentPageIndex == 1)
                 {
                     tempPageIndex = pager.CurrentPageIndex + pager.PageNum;
-                    for(int i = pager.CurrentPageIndex; (i < tempPageIndex && i < pager.TotalPage); i++)
+                    for(int i = pager.CurrentPageIndex; (i < tempPageIndex && i <= pager.TotalPage); i++)
                     {
                         pager.PageList.Add(new PagerButton(i, i.ToString(), BuildLink(pager.urlPrefix, symbol, pager.PageIndexParamName, i), false, i == pager.CurrentPageIndex));
                     }
@@ -364,7 +364,8 @@ namespace System.Web.Mvc
                 }
                 else
                 {
-                    int Before = pager.CurrentPageIndex - (pager.PageNum / 2), After = pager.CurrentPageIndex + (pager.PageNum / 2);
+                    tempPageIndex = (pager.PageNum + 2 - 1) / 2;
+                    int Before = pager.CurrentPageIndex - tempPageIndex, After = pager.CurrentPageIndex + tempPageIndex;
                     if(Before < 0)
                     {
                         After += (0 - Before);
