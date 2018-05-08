@@ -30,11 +30,111 @@ namespace ClassLib4Net
         /// <summary>
         /// 获取字符串的实际字节长度的方法
         /// </summary>
+        /// <param name="source"></param>
+        /// <param name="encoding">System.Text.Encoding</param>
+        /// <returns></returns>
+        [Obsolete("推荐使用：" + nameof(GetRealLength))]
+        public static int GetBytesLength(string source, System.Text.Encoding encoding)
+        {
+            if(string.IsNullOrWhiteSpace(source) || source.Length == 0)
+                return 0;
+
+            int tempLen = 0;
+            byte[] s = encoding.GetBytes(source);
+            for(int i = 0; i < s.Length; i++)
+            {
+                if((int)s[i] == 63)
+                {
+                    tempLen += 2;
+                }
+                else
+                {
+                    tempLen += 1;
+                }
+            }
+            return tempLen;
+        }
+
+        /// <summary>
+        /// 按字节数截取字符串的方法(比SubString好用)
+        /// </summary>
+        /// <param name="source">要截取的字符串（可空）</param>
+        /// <param name="NumberOfBytes">要截取的字节数</param>
+        /// <param name="encoding">System.Text.Encoding</param>
+        /// <param name="suffix">结果字符串的后缀（超出部分显示为该后缀）</param>
+        /// <returns></returns>
+        public static string SubStringByBytes(string source, int NumberOfBytes, System.Text.Encoding encoding, string suffix = "...")
+        {
+            if(string.IsNullOrWhiteSpace(source) || source.Length == 0)
+                return source;
+
+            int tempLen = 0;
+            byte[] s = encoding.GetBytes(source);
+            if(s.Length <= NumberOfBytes)
+                return source;
+
+            byte[] newByte = new byte[NumberOfBytes];
+            for(int i = 0; i < s.Length; i++)
+            {
+                if((int)s[i] == 63)
+                {
+                    tempLen += 2;
+                }
+                else
+                {
+                    tempLen += 1;
+                }
+
+                if(tempLen > NumberOfBytes)
+                    break;
+                else
+                    newByte[i] = s[i];
+
+            }
+
+            return string.Concat(encoding.GetString(newByte), suffix);
+        }
+        /// <summary>
+        /// 按字节数截取字符串的方法(比SubString好用)
+        /// </summary>
+        /// <param name="source">要截取的字符串（可空）</param>
+        /// <param name="NumberOfBytes">要截取的字节数</param>
+        /// <param name="encoding">UTF-8，Unicode，GB2312...</param>
+        /// <param name="suffix">结果字符串的后缀（超出部分显示为该后缀）</param>
+        /// <returns></returns>
+        public static string SubStringByBytes(string source, int NumberOfBytes, string encoding = "UTF-8", string suffix = "...")
+        {
+            return SubStringByBytes(source, NumberOfBytes, Encoding.GetEncoding(encoding), suffix);
+        }
+
+        /// <summary>
+        /// 获取字符串的实际字节长度的方法（Encoding.Default编码）
+        /// </summary>
         /// <param name="source">字符串</param>
         /// <returns>实际长度</returns>
         public static int GetRealLength(string source)
         {
             return Encoding.Default.GetByteCount(source);
+        }
+        /// <summary>
+        /// 获取字符串的实际字节长度的方法
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="encoding">System.Text.Encoding</param>
+        /// <returns></returns>
+        public static int GetRealLength(string source, Encoding encoding)
+        {
+            return encoding.GetByteCount(source);
+        }
+        /// <summary>
+        /// 获取字符串的实际字节长度的方法
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="encoding">UTF-8，Unicode，GB2312...</param>
+        /// <returns></returns>
+        public static int GetRealLength(string source, string encoding)
+        {
+            return GetRealLength(source, Encoding.GetEncoding(encoding));
         }
         #endregion
 
@@ -42,14 +142,16 @@ namespace ClassLib4Net
         /// <summary>
         /// 按字节数截取字符串的方法
         /// </summary>
-        /// <param name="source">要截取的字符串</param>
+        /// <param name="source">要截取的字符串（可空）</param>
         /// <param name="NumberOfBytes">要截取的字节数</param>
-        /// <param name="needEndDot">是否需要结尾的省略号</param>
-        /// <returns>截取后的字符串</returns>
-        public static string SubString(string source, int NumberOfBytes, bool needEndDot)
+        /// <param name="encoding">System.Text.Encoding</param>
+        /// <param name="suffix">结果字符串的后缀（超出部分显示为该后缀）</param>
+        /// <returns></returns>
+        public static string SubString(string source, int NumberOfBytes, Encoding encoding, string suffix = "...")
         {
+            if(string.IsNullOrWhiteSpace(source) || NumberOfBytes < 1) return string.Empty;
             string temp = string.Empty;
-            if (GetRealLength(source) <= NumberOfBytes)
+            if(GetRealLength(source, encoding) <= NumberOfBytes)
             {
                 return source;
             }
@@ -57,11 +159,11 @@ namespace ClassLib4Net
             {
                 int t = 0;
                 char[] q = source.ToCharArray();
-                for (int i = 0; i < q.Length && t < NumberOfBytes; i++)
+                for(int i = 0; i < q.Length && t < NumberOfBytes; i++)
                 {
-                    if ((int)q[i] > 127)
+                    if((int)q[i] > 127)
                     {
-                        if (t == (NumberOfBytes - 1))
+                        if(t == (NumberOfBytes - 1))
                             break;
                         temp += q[i];
                         t += 2;
@@ -72,8 +174,8 @@ namespace ClassLib4Net
                         t++;
                     }
                 }
-                if (needEndDot)
-                    temp += "...";
+                if(!string.IsNullOrWhiteSpace(suffix))
+                    temp += suffix;
                 return temp;
             }
         }
@@ -82,49 +184,22 @@ namespace ClassLib4Net
         /// </summary>
         /// <param name="source">要截取的字符串（可空）</param>
         /// <param name="NumberOfBytes">要截取的字节数</param>
+        /// <param name="encoding">UTF-8，Unicode，GB2312...</param>
         /// <param name="suffix">结果字符串的后缀（超出部分显示为该后缀）</param>
         /// <returns></returns>
-        public static string SubString(string source, int NumberOfBytes, string suffix = "...")
+        public static string SubString(string source, int NumberOfBytes, string encoding = "UTF-8", string suffix = "...")
         {
-            if (string.IsNullOrWhiteSpace(source) || NumberOfBytes < 1) return string.Empty;
-            string temp = string.Empty;
-            if (GetRealLength(source) <= NumberOfBytes)
-            {
-                return source;
-            }
-            else
-            {
-                int t = 0;
-                char[] q = source.ToCharArray();
-                for (int i = 0; i < q.Length && t < NumberOfBytes; i++)
-                {
-                    if ((int)q[i] > 127)
-                    {
-                        if (t == (NumberOfBytes - 1))
-                            break;
-                        temp += q[i];
-                        t += 2;
-                    }
-                    else
-                    {
-                        temp += q[i];
-                        t++;
-                    }
-                }
-                if (!string.IsNullOrWhiteSpace(suffix))
-                    temp += suffix;
-                return temp;
-            }
+            return SubString(source, NumberOfBytes, Encoding.GetEncoding(encoding), suffix);
         }
 
-		/// <summary>
-		/// 截取字符串的方法（按正常字符串Length计算）
-		/// </summary>
-		/// <param name="source">要截取的字符串（可空）</param>
-		/// <param name="length">要截取的字数</param>
-		/// <param name="suffix">结果字符串的后缀（超出部分显示为该后缀）</param>
-		/// <returns></returns>
-		public static string SubStringNatural(string source, int length, string suffix = "...")
+        /// <summary>
+        /// 截取字符串的方法（按正常字符串Length计算）
+        /// </summary>
+        /// <param name="source">要截取的字符串（可空）</param>
+        /// <param name="length">要截取的字数</param>
+        /// <param name="suffix">结果字符串的后缀（超出部分显示为该后缀）</param>
+        /// <returns></returns>
+        public static string SubStringNatural(string source, int length, string suffix = "...")
 		{
 			if (string.IsNullOrWhiteSpace(source) || length < 1) return string.Empty;
 			return source.Length > length ? (source.Substring(0, length) + (string.IsNullOrWhiteSpace(suffix) ? "" : suffix)) : source;
@@ -349,6 +424,33 @@ namespace ClassLib4Net
             bytes = Encoding.Convert(srcEncoding, dstEncoding, bytes);
             return Encoding.Default.GetString(bytes);
         }
+
+        /// <summary>
+        /// 将字符串转换到UTF-8编码
+        /// </summary>
+        /// <param name="unicodeString"></param>
+        /// <returns></returns>
+        public static string ConvertToUTF8Encoding(string unicodeString)
+        {
+            System.Text.UTF8Encoding utf8 = new System.Text.UTF8Encoding();
+            Byte[] encodedBytes = utf8.GetBytes(unicodeString);
+            String decodedString = utf8.GetString(encodedBytes);
+            return decodedString;
+        }
+        /// <summary>
+        /// 字符串编码
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="OldEncoding"></param>
+        /// <param name="NewEncoding"></param>
+        /// <returns></returns>
+        public static string EncodingString(string source, System.Text.Encoding OldEncoding, System.Text.Encoding NewEncoding)
+        {
+            Byte[] encodedBytes = OldEncoding.GetBytes(source);
+            String decodedString = NewEncoding.GetString(encodedBytes);
+            return decodedString;
+        }
+
         #endregion
 
         #region 将全角字符串转成半角字符串的方法

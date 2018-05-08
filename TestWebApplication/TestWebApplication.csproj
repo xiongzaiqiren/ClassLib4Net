@@ -169,10 +169,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Api\" />
-    <Folder Include="Views\MySql\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\ClassLib4Net.Sample\ClassLib4Net.Sample.csproj">
       <Project>{4773e412-3a79-479e-a016-c888d43c1c72}</Project>
