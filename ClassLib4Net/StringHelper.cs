@@ -76,8 +76,8 @@ namespace ClassLib4Net
             foreach(var c in source)
             {
                 Char[] _charArr = new Char[] { c };
-                var _len = encoding.GetBytes(_charArr).Length;
-                if((tempLen + _len) > NumberOfBytes)
+                byte[] _charBytes = encoding.GetBytes(_charArr);
+                if((tempLen + _charBytes.Length) > NumberOfBytes)
                 {
                     if(!string.IsNullOrWhiteSpace(suffix))
                         sb.Append(suffix);
@@ -85,8 +85,8 @@ namespace ClassLib4Net
                 }
                 else
                 {
-                    tempLen += _len;
-                    sb.Append(c);
+                    tempLen += _charBytes.Length;
+                    sb.Append(encoding.GetString(_charBytes));
                 }
             }
             return sb.ToString();
