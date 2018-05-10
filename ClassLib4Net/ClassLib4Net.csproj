@@ -167,6 +167,7 @@
     <Compile Include="MsmqRount\CommonPlatformConfiurationSectionHandler.cs" />
     <Compile Include="MsmqRount\MsmqConfig.cs" />
     <Compile Include="MsmqRount\MultiMessageAddressRount.cs" />
+    <Compile Include="MVCControl\JsonpResult.cs" />
     <Compile Include="MVCControl\Pager.cs" />
     <Compile Include="ObjectHelper.cs" />
     <Compile Include="PinYinHelper.cs" />
