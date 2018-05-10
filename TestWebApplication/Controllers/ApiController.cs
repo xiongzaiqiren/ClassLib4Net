@@ -1,4 +1,5 @@
 ﻿using ClassLib4Net;
+using ClassLib4Net.MVCControl;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -118,6 +119,24 @@ namespace TestWebApplication.Controllers
             string s = ClassLib4Net.Http.HttpHelper.Request(Request.Url.Scheme + "://" + Request.Url.Host + "/Api/GetDataList");
             var json1 = s.ToObject<ClassLib4Net.Api.ApiDataListModel<PeopleModel>>();
             var json2 = JsonHelper.DeSerialize<ClassLib4Net.Api.ApiDataListModel<PeopleModel>>(s);
+        }
+
+        /// <summary>
+        /// 处理Jsonp请求
+        /// </summary>
+        /// <param name="createrid"></param>
+        /// <param name="creater"></param>
+        /// <returns></returns>
+        //[HttpGet]
+        [ActionName("TestJsonp")]
+        public ActionResult TestJsonp(string createrid, string creater)
+        {
+            var result = new ClassLib4Net.Api.ApiDataModel();
+            result.Data = new { describe = "Jsonp by ClassLib4Net", createrid = createrid, creater = creater };
+            result.Status = 200;
+            result.Message = "ok";
+
+            return this.Jsonp(result);
         }
 
     }

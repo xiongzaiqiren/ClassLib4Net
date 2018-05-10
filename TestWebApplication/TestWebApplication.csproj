@@ -122,6 +122,7 @@
     <Content Include="Content\logo.jpg" />
     <Content Include="Global.asax" />
     <Content Include="Models\测试模型.txt" />
+    <Content Include="Views\Api\JsonpClient.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -162,6 +163,7 @@
     <Content Include="Handler\ValidateImg.ashx" />
     <Content Include="Handler\QRCode.ashx" />
     <Content Include="Views\List\SampleForPagering.cshtml" />
+    <Content Include="Views\Api\TestJsonp.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

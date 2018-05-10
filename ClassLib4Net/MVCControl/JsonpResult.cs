@@ -18,8 +18,7 @@ namespace ClassLib4Net.MVCControl
             {
                 throw new ArgumentNullException("context");
             }
-            if((JsonRequestBehavior == JsonRequestBehavior.DenyGet) &&
-                  String.Equals(context.HttpContext.Request.HttpMethod, "GET", StringComparison.OrdinalIgnoreCase))
+            if((JsonRequestBehavior == JsonRequestBehavior.DenyGet) && String.Equals(context.HttpContext.Request.HttpMethod, "GET", StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidOperationException();
             }

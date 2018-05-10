@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>jsonp测试</title>
+	<meta charset="utf-8" />
+
+    <script src="https://cdn.bootcss.com/jquery/1.7.1/jquery.min.js"></script>
+    <script>
+        (function () {
+            $.ajax({
+                type: "get",
+                url: "http://xxx.xxx.com/Api/TestJsonp",
+                //url:"http://localhost:8080/Api/TestJsonp",
+                data: {
+                    createrid: "111",
+                    creater: "111"
+                },
+                dataType: "jsonp",
+                jsonp: "callback",//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
+                jsonpCallback: "JsonCallback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名，也可以写"?"，jQuery会自动为你处理数据
+                success: function (data) {    //data为后台返回的数据
+                    console.log(data);
+                    alert("成功");
+                },
+                error: function (jqXHR) {
+                    console.log(jqXHR);
+                    alert("发生错误" + jqXHR.status);
+                }
+            });
+        })();
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>
