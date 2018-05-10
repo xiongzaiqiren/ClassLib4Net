@@ -68,31 +68,28 @@ namespace ClassLib4Net
             if(string.IsNullOrWhiteSpace(source) || source.Length == 0)
                 return source;
 
-            int tempLen = 0;
-            byte[] s = encoding.GetBytes(source);
-            if(s.Length <= NumberOfBytes)
+            if(encoding.GetBytes(source).Length <= NumberOfBytes)
                 return source;
 
-            byte[] newByte = new byte[NumberOfBytes];
-            for(int i = 0; i < s.Length; i++)
+            long tempLen = 0;
+            StringBuilder sb = new StringBuilder();
+            foreach(var c in source)
             {
-                if((int)s[i] == 63)
+                Char[] _charArr = new Char[] { c };
+                var _len = encoding.GetBytes(_charArr).Length;
+                if((tempLen + _len) > NumberOfBytes)
                 {
-                    tempLen += 2;
-                }
-                else
-                {
-                    tempLen += 1;
-                }
-
-                if(tempLen > NumberOfBytes)
+                    if(!string.IsNullOrWhiteSpace(suffix))
+                        sb.Append(suffix);
                     break;
+                }
                 else
-                    newByte[i] = s[i];
-
+                {
+                    tempLen += _len;
+                    sb.Append(c);
+                }
             }
-
-            return string.Concat(encoding.GetString(newByte), suffix);
+            return sb.ToString();
         }
         /// <summary>
         /// 按字节数截取字符串的方法(比SubString好用)

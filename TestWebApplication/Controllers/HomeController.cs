@@ -17,6 +17,8 @@ namespace TestWebApplication.Controllers
 
             var s3 = ClassLib4Net.StringHelper.SubStringByBytes("黑龙江省党政机关_jim-361", 30, System.Text.Encoding.UTF8, null);
 
+            var s4 = ClassLib4Net.StringHelper.SubStringByBytes("江西高速公路投资_淡如水", 30, System.Text.Encoding.UTF8, null);
+
             return View();
         }
 
