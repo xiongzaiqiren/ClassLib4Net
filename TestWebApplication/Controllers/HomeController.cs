@@ -12,12 +12,13 @@ namespace TestWebApplication.Controllers
         // GET: Home
         public ActionResult Index()
         {
-            var s1 = ClassLib4Net.StringHelper.SubString("黑龙江省党政机关_jim-361", 30);
-            var s2 = ClassLib4Net.StringHelper.SubStringNatural("黑龙江省党政机关_jim-361", 30);
+            var s1 = StringHelper.SubString("黑龙江省党政机关_jim-361", 30);
+            var s2 = StringHelper.SubStringNatural("黑龙江省党政机关_jim-361", 30);
 
-            var s3 = ClassLib4Net.StringHelper.SubStringByBytes("黑龙江省党政机关_jim-361", 30, System.Text.Encoding.UTF8, null);
+            var s3 = StringHelper.SubStringByBytes("黑龙江省党政机关_jim-361", 30, System.Text.Encoding.UTF8, null);
 
-            var s4 = ClassLib4Net.StringHelper.SubStringByBytes("江西高速公路投资_淡如水", 30, System.Text.Encoding.UTF8, null);
+            var s4 = StringHelper.SubStringByBytes("江西高速公路投资_淡如水", 30, System.Text.Encoding.UTF8, null);
+            s4 = StringHelper.SubStringByBytes(StringHelper.ConvertToUTF8Encoding("江西高速公路投资_淡如水"), 30, System.Text.Encoding.UTF8, null);
 
             return View();
         }
