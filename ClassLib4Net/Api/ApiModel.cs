@@ -80,8 +80,8 @@ namespace ClassLib4Net.Api
         [DataMember(EmitDefaultValue = true, IsRequired = true)]
         public string Message { get; set; }
 
-        public ApiModel() { Status = 0; Message = ""; }
-        public ApiModel(long status = 0, string message = "") { Status = status; Message = message; }
+        public ApiModel() : base() { Status = 0; Message = ""; }
+        public ApiModel(long status = 0, string message = "") : base() { Status = status; Message = message; }
     }
 
     /// <summary>
@@ -115,157 +115,143 @@ namespace ClassLib4Net.Api
     #endregion
 
     #region api list
-    /// <summary>
-    /// 列表数据接口模型
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
     [Serializable]
     [DataContract]
-    public class ApiListModel<T> : ApiModel, IPaging, IPageCount, ITotal
+    public abstract class abstractApiList : IPaging, IPageCount, ITotal
     {
         /// <summary>
         /// 列表数据
         /// </summary>
         [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public ICollection<T> List { get; set; }
+        public virtual ICollection List { get; set; }
         /// <summary>
         /// 页容量
         /// </summary>
         [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public long PageSize { get; set; }
+        public virtual long PageSize { get; set; }
         /// <summary>
         /// 页索引
         /// </summary>
         [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public long PageIndex { get; set; }
+        public virtual long PageIndex { get; set; }
         /// <summary>
         /// 总数
         /// </summary>
         [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public long Total { get; set; }
+        public virtual long Total { get; set; }
 
         /// <summary>
         /// 分页总数(根据总数和页容量自动计算)
         /// </summary>
         [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public long PageCount { get { return (Total - 1) / PageSize + 1; } set { } }
+        public virtual long PageCount
+        {
+            get
+            {
+                if(PageSize < 1)
+                    throw new ArgumentException("Must be a positive integer greater than zero.", nameof(PageSize));
+                return (Total - 1) / PageSize + 1;
+            }
+            set { }
+        }
+
+        public abstractApiList() : base() { List = default(ICollection); }
+        public abstractApiList(ICollection list = default(ICollection), long total = 0) : base() { List = list; Total = total; }
+    }
+
+    [Serializable]
+    [DataContract]
+    public class ApiListModel : abstractApiList, IBase
+    {
+        /// <summary>
+        /// 状态码
+        /// </summary>
+        [DataMember(EmitDefaultValue = true, IsRequired = true)]
+        public long Status { get; set; }
+        /// <summary>
+        /// 信息
+        /// </summary>
+        [DataMember(EmitDefaultValue = true, IsRequired = true)]
+        public string Message { get; set; }
+
+        public ApiListModel() : base() { List = default(ICollection); }
+        public ApiListModel(ICollection list = default(ICollection), long total = 0) : base(list, total) { }
+        public ApiListModel(ICollection list = default(ICollection), long total = 0, long status = 0, string message = "") : base(list, total) { Status = status; Message = message; }
+    }
+
+    /// <summary>
+    /// 列表数据接口模型
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    [Obsolete("不推荐使用此泛型类，推荐使用" + nameof(ApiListModel))]
+    [Serializable]
+    [DataContract]
+    public class ApiListModel<T> : ApiListModel
+    {
+        /// <summary>
+        /// 列表数据
+        /// </summary>
+        [DataMember(EmitDefaultValue = true, IsRequired = true)]
+        public new ICollection<T> List { get; set; }
 
         public ApiListModel() : base() { List = default(ICollection<T>); }
-        public ApiListModel(ICollection<T> list = default(ICollection<T>), long total = 0, long status = 0, string message = "") : base(status, message) { List = list; Total = total; }
-    }
-
-    /// <summary>
-    /// 列表数据接口模型
-    /// </summary>
-    [Serializable]
-    [DataContract]
-    public class ApiListModel : ApiListModel<object>
-    {
-        public ApiListModel() : base() { }
-        public ApiListModel(ICollection<object> list = default(ICollection<object>), long total = 0, long status = 0, string message = "") : base(list, total, status, message) { }
+        public ApiListModel(ICollection<T> list = default(ICollection<T>), long total = 0, long status = 0, string message = "") { List = list; Total = total; Status = status; Message = message; }
     }
     #endregion
 
-    #region ApiListData
+    #region ApiList
+    /// <summary>
+    /// 列表数据类型
+    /// </summary>
+    [Serializable]
+    [DataContract]
+    public class ApiList : abstractApiList
+    {
+        public ApiList() : base() { }
+        public ApiList(ICollection list = default(ICollection), long total = 0) : base(list, total) { }
+    }
+
     /// <summary>
     /// 列表数据类型
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [Serializable]
     [DataContract]
-    public class ApiListData<T> : IPaging, IPageCount, ITotal
+    public class ApiList<T> : ApiList
     {
         /// <summary>
         /// 列表数据
         /// </summary>
         [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public ICollection<T> List { get; set; }
-        /// <summary>
-        /// 页容量
-        /// </summary>
-        [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public long PageSize { get; set; }
-        /// <summary>
-        /// 页索引
-        /// </summary>
-        [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public long PageIndex { get; set; }
-        /// <summary>
-        /// 总数
-        /// </summary>
-        [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public long Total { get; set; }
+        public new ICollection<T> List { get; set; }
 
-        /// <summary>
-        /// 分页总数(根据总数和页容量自动计算)
-        /// </summary>
-        [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public long PageCount { get { return (Total - 1) / PageSize + 1; } set { } }
-
-        public ApiListData() { List = default(ICollection<T>); }
-        public ApiListData(ICollection<T> list = default(ICollection<T>), long total = 0) { List = list; Total = total; }
-    }
-
-    /// <summary>
-    /// 列表数据类型
-    /// </summary>
-    [Serializable]
-    [DataContract]
-    public class ApiListData : IPaging, IPageCount, ITotal
-    {
-        /// <summary>
-        /// 列表数据
-        /// </summary>
-        [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public ICollection List { get; set; }
-        /// <summary>
-        /// 页容量
-        /// </summary>
-        [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public long PageSize { get; set; }
-        /// <summary>
-        /// 页索引
-        /// </summary>
-        [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public long PageIndex { get; set; }
-        /// <summary>
-        /// 总数
-        /// </summary>
-        [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public long Total { get; set; }
-
-        /// <summary>
-        /// 分页总数(根据总数和页容量自动计算)
-        /// </summary>
-        [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public long PageCount { get { return (Total - 1) / PageSize + 1; } set { } }
-
-        public ApiListData() { List = default(ICollection); }
-        public ApiListData(ICollection list = default(ICollection), long total = 0) { List = list; Total = total; }
+        public ApiList() { List = default(ICollection<T>); }
+        public ApiList(ICollection<T> list = default(ICollection<T>), long total = 0) { List = list; Total = total; }
     }
     #endregion
 
     /// <summary>
     /// 数据列表接口模型
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     [Serializable]
     [DataContract]
-    public class ApiDataListModel<T> : ApiDataModel<ApiListData<T>>
+    public class ApiDataListModel : ApiDataModel<ApiList>
     {
-        public ApiDataListModel() : base() { Data = new ApiListData<T>(); }
-        public ApiDataListModel(ICollection<T> list = default(ICollection<T>), long total = 0) : base(new ApiListData<T>() { List = list, Total = total }) { }
+        public ApiDataListModel() : base() { Data = new ApiList(); }
+        public ApiDataListModel(ApiList data, long status = 0, string message = "") : base(data, status, message) { }
     }
 
     /// <summary>
     /// 数据列表接口模型
     /// </summary>
+    /// <typeparam name="T"></typeparam>
+    [Obsolete("不推荐使用此泛型类，推荐使用" + nameof(ApiDataListModel))]
     [Serializable]
     [DataContract]
-    public class ApiDataListModel : ApiDataModel<ApiListData>
+    public class ApiDataListModel<T> : ApiDataModel<ApiList<T>>
     {
-        public ApiDataListModel() : base() { Data = new ApiListData(); }
-        public ApiDataListModel(ICollection list = default(ICollection), long total = 0) : base(new ApiListData() { List = list, Total = total }) { }
+        public ApiDataListModel() : base() { Data = new ApiList<T>(); }
+        public ApiDataListModel(ApiList<T> data, long total = 0, long status = 0, string message = "") : base(data, status, message) { }
     }
 
 }

@@ -121,6 +121,7 @@ namespace TestWebApplication.Controllers
             var json2 = JsonHelper.DeSerialize<ClassLib4Net.Api.ApiDataListModel<PeopleModel>>(s);
         }
 
+        #region Jsonp
         /// <summary>
         /// 处理Jsonp请求
         /// </summary>
@@ -138,6 +139,65 @@ namespace TestWebApplication.Controllers
 
             return this.Jsonp(result);
         }
+
+        /// <summary>
+        /// 处理Jsonp请求
+        /// </summary>
+        /// <param name="createrid"></param>
+        /// <param name="creater"></param>
+        /// <returns></returns>
+        //[HttpGet]
+        [ActionName("TestListJsonp")]
+        public ActionResult TestListJsonp(string createrid, string creater)
+        {
+            var result = new ClassLib4Net.Api.ApiListModel();
+            var list = new List<PeopleModel>() {
+                new PeopleModel() { Name="AAA", Age=25, Nationality="abc", Province="北京"  },
+                new PeopleModel() { Name="BBB", Age=28, Nationality="def", Province="天津"  },
+                new PeopleModel() { Name="CCC", Age=30, Nationality="hig", Province="郑州"  },
+            };
+
+            result.List = list;
+            result.Total = list.Count;
+            result.PageIndex = 1;
+            result.PageSize = 10;
+
+            result.Status = 200;
+            result.Message = "ok";
+
+            return this.Jsonp(result);
+        }
+
+
+        /// <summary>
+        /// 处理Jsonp请求
+        /// </summary>
+        /// <param name="createrid"></param>
+        /// <param name="creater"></param>
+        /// <returns></returns>
+        //[HttpGet]
+        [ActionName("TestDataListJsonp")]
+        public ActionResult TestDataListJsonp(string createrid, string creater)
+        {
+            var result = new ClassLib4Net.Api.ApiDataListModel();
+            var list = new List<PeopleModel>() {
+                new PeopleModel() { Name="AAA", Age=25, Nationality="abc", Province="北京"  },
+                new PeopleModel() { Name="BBB", Age=28, Nationality="def", Province="天津"  },
+                new PeopleModel() { Name="CCC", Age=30, Nationality="hig", Province="郑州"  },
+            };
+
+            result.Data.List = list;
+            result.Data.Total = list.Count;
+            result.Data.PageIndex = 1;
+            result.Data.PageSize = 10;
+
+            result.Status = 200;
+            result.Message = "ok";
+
+            return this.Jsonp(result);
+        }
+
+        #endregion
 
     }
 }
