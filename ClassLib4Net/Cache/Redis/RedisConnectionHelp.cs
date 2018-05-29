@@ -10,11 +10,16 @@ namespace ClassLib4Net.Cache.Redis
     /// </summary>
     public static class RedisConnectionHelp
     {
-        //系统自定义Key前缀
+        /// <summary>
+        /// 系统自定义Key前缀（默认取appSettings的key=redisKey的值）
+        /// </summary>
         public static readonly string SysCustomKey = ConfigurationManager.AppSettings["redisKey"] ?? "";
 
-        //127.0.0.1:6379,connectTimeout=10000,allowadmin=true
-        private static readonly string RedisConnectionString = ConfigurationManager.ConnectionStrings["RedisExchangeHosts"].ConnectionString;
+        /// <summary>
+        /// 127.0.0.1:6379,connectTimeout=10000,allowadmin=true
+        /// （默认取appSettings的key=RedisConnectionString的值）
+        /// </summary>
+        private static readonly string RedisConnectionString = ConfigurationManager.ConnectionStrings["RedisConnectionString"].ConnectionString;
 
         private static readonly object Locker = new object();
         private static ConnectionMultiplexer _instance;

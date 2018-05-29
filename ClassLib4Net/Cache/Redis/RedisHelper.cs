@@ -8,10 +8,16 @@ using System.Threading.Tasks;
 
 namespace ClassLib4Net.Cache.Redis
 {
+    /// <summary>
+    /// Redis助手
+    /// </summary>
     public class RedisHelper
     {
         private int DbNum { get; }
         private readonly ConnectionMultiplexer _conn;
+        /// <summary>
+        /// 自定义Key（会附加在默认Key后面）
+        /// </summary>
         public string CustomKey;
 
         #region 构造函数
