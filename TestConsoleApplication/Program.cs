@@ -10,7 +10,8 @@ namespace TestConsoleApplication
     {
         static void Main(string[] args)
         {
-            Cache.RedisTest.String();
+            //Cache.RedisTest.String();
+            Cache.RedisTest.Sort();
 
             Console.ReadKey();
         }
