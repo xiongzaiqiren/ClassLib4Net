@@ -239,7 +239,7 @@ namespace ClassLib4Net
         {
             try
             {
-                SetCookie("OK", "CookieIsEnable"); //1分钟
+                SetCookie("OK", "CookieIsEnable", Minutes: 1); //1分钟
                 if(string.IsNullOrWhiteSpace(GetCookie("CookieIsEnable")))
                     return false;
                 else
