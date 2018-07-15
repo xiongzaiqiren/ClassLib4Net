@@ -34,6 +34,7 @@ namespace ClassLib4Net
         {
             if(string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException("key is null.");
             if(null == value || DBNull.Value == value) throw new ArgumentNullException("value is null.");
+            if(null == HttpContext.Current.Session) throw new NullReferenceException(nameof(HttpContext.Current.Session));
 
             var obj = HttpContext.Current.Session[key];
             if(null != obj)
@@ -48,6 +49,7 @@ namespace ClassLib4Net
         /// <param name="key"></param>
         public static void Remove(string key)
         {
+            if(null == HttpContext.Current.Session) throw new NullReferenceException(nameof(HttpContext.Current.Session));
             HttpContext.Current.Session.Remove(key);
             HttpContext.Current.Session.Abandon();
         }
