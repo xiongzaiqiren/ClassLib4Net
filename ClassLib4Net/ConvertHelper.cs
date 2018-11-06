@@ -452,7 +452,7 @@ namespace ClassLib4Net
 		/// <summary>
 		/// Unix时间戳转换为标准时间格式（基准时间为"1970-1-1 08:00:00"）
 		/// </summary>
-		/// <param name="TimeStamp">时间戳</param>
+		/// <param name="TimeStamp">时间戳（10位）</param>
 		/// <returns>标准时间格式</returns>
 		public static DateTime TimeStamp(int timestamp)
 		{
@@ -463,7 +463,7 @@ namespace ClassLib4Net
 			return now;
 		}
 		/// <summary>
-		/// 标准时间格式转换为Unix时间戳（基准时间为"1970-1-1 08:00:00"）
+		/// 标准时间格式转换为Unix时间戳，秒/10位（基准时间为"1970-1-1 08:00:00"）
 		/// </summary>
 		/// <param name="time">标准时间格式</param>
 		/// <returns>时间戳</returns>
@@ -478,9 +478,9 @@ namespace ClassLib4Net
 		}
 
 		/// <summary>
-		/// 将Unix时间戳转换为DateTime类型时间，精确到毫秒（基准时间为"1970-1-1 00:00:00"转换成当前计算机的时区的时间）
+		/// 将Unix时间戳转换为DateTime类型时间，精确到毫秒/13位（基准时间为"1970-1-1 00:00:00"转换成当前计算机的时区的时间）
 		/// </summary>
-		/// <param name="timestamp">double 型数字</param>
+		/// <param name="timestamp">double 型数字（13位）</param>
 		/// <returns>DateTime</returns>
 		public static System.DateTime TimeStampToLocalTime(double timestamp)
 		{
@@ -491,7 +491,7 @@ namespace ClassLib4Net
 		}
 
 		/// <summary>
-		/// DateTime时间格式转换为Unix时间戳格式，精确到毫秒（基准时间为"1970-1-1 00:00:00"转换成当前计算机的时区的时间）
+		/// DateTime时间格式转换为Unix时间戳格式，精确到毫秒/13位（基准时间为"1970-1-1 00:00:00"转换成当前计算机的时区的时间）
 		/// </summary>
 		/// <param name="time">DateTime时间</param>
 		/// <returns>时间戳</returns>
@@ -503,7 +503,7 @@ namespace ClassLib4Net
 		}
 
 		/// <summary>
-		/// 日期转换成unix时间戳（基准时间为"1970-1-1 00:00:00.000"，并通过target.Kind来控制基于本地时间、协调世界时间UTC，还是两者皆否）
+		/// 日期转换成unix时间戳，精确到秒/10位（基准时间为"1970-1-1 00:00:00.000"，并通过target.Kind来控制基于本地时间、协调世界时间UTC，还是两者皆否）
 		/// </summary>
 		/// <param name="dateTime">时间对象</param>
 		/// <returns></returns>
@@ -517,7 +517,7 @@ namespace ClassLib4Net
 		/// unix时间戳转换成日期（基准时间为"1970-1-1 00:00:00.000"，并通过target.Kind来控制基于本地时间、协调世界时间UTC，还是两者皆否）
 		/// </summary>
 		/// <param name="target">参考DateTime对象（通过target.Kind来控制基于本地时间、协调世界时间UTC，还是两者皆否）</param>
-		/// <param name="timestamp">时间戳（秒）</param>
+		/// <param name="timestamp">时间戳（秒/10位）</param>
 		/// <returns></returns>
 		public static DateTime TimeStampByKind(DateTime target, long timestamp)
 		{

@@ -45,7 +45,7 @@ namespace ClassLib4Net.Extension.Dictionary
         /// <returns></returns>
         public static Dictionary<string, T> AddValue<T>(this Dictionary<string, T> dictionary, string key, T value)
         {
-            if (dictionary.ContainsKey(key))
+            if(dictionary.ContainsKey(key))
                 dictionary[key] = value;
             else
                 dictionary.Add(key, value);
@@ -63,7 +63,7 @@ namespace ClassLib4Net.Extension.Dictionary
         public static Dictionary<string, T> AddValues<T>(this Dictionary<string, T> dictionary, string[] keys, T[] values)
         {
             var i = 0;
-            foreach (var key in keys)
+            foreach(var key in keys)
             {
                 dictionary.AddValue(key, i >= values.Length ? default(T) : values[i]);
                 i++;
@@ -81,14 +81,14 @@ namespace ClassLib4Net.Extension.Dictionary
         public static Dictionary<string, string> Sort(this Dictionary<string, string> dictionary, bool isAsc = true)
         {
             Dictionary<string, string> newDictionarys = new Dictionary<string, string>();
-            foreach (KeyValuePair<string, string> item in dictionary)
+            foreach(KeyValuePair<string, string> item in dictionary)
             {
-                if (!string.IsNullOrWhiteSpace(item.Key) && !string.IsNullOrWhiteSpace(item.Value))
+                if(!string.IsNullOrWhiteSpace(item.Key) && !string.IsNullOrWhiteSpace(item.Value))
                 {
                     newDictionarys.Add(item.Key, item.Value);
                 }
             }
-            if (isAsc)
+            if(isAsc)
                 return newDictionarys.OrderBy(o => o.Key).ToDictionary(o => o.Key, p => p.Value); //将集合内非空参数值的参数按照参数名ASCII码从小到大排序（字典序）
             else
                 return newDictionarys.OrderByDescending(o => o.Key).ToDictionary(o => o.Key, p => p.Value); //将集合内非空参数值的参数按照参数名ASCII码从大到小排序（字典降序）
@@ -98,16 +98,42 @@ namespace ClassLib4Net.Extension.Dictionary
         /// 将参数字典转换成URL键值对的格式（即 key1=value1&amp;key2=value2…）
         /// </summary>
         /// <param name="dictionary">参数（键值对）字典</param>
+        /// <param name="removeEmpty">是否排除空项（健或值为空或空字符串）</param>
+        /// <param name="urlEncode">是否Value进行URL编码</param>
         /// <returns></returns>
-        public static string ToURLParameter(this Dictionary<string, string> dictionary)
+        public static string ToURLParameter(this Dictionary<string, string> dictionary, bool removeEmpty = false, bool urlEncode = false)
         {
-            if (dictionary == null || dictionary.Count < 1) return string.Empty;
-            StringBuilder UrlParameterString = new StringBuilder();
-            foreach (KeyValuePair<string, string> item in dictionary)
+            if(dictionary == null || dictionary.Count < 1) return string.Empty;
+            StringBuilder sb = new StringBuilder();
+            foreach(KeyValuePair<string, string> item in dictionary)
             {
-                UrlParameterString.AppendFormat("{0}={1}&", item.Key, item.Value);
+                if(removeEmpty && (string.IsNullOrWhiteSpace(item.Key) || string.IsNullOrWhiteSpace(item.Value)))
+                    continue;
+                sb.AppendFormat("{0}={1}&", item.Key, urlEncode ? System.Web.HttpUtility.UrlEncode(item.Value) : item.Value);
             }
-            return UrlParameterString.ToString().Trim(new char[] { '&' });
+            return sb.ToString().Trim(new char[] { '&' });
+        }
+        #endregion
+
+        #region SortedDictionary
+        /// <summary>
+        /// 将参数字典转换成URL键值对的格式（即 key1=value1&amp;key2=value2…）
+        /// </summary>
+        /// <param name="sd">参数（键值对）字典</param>
+        /// <param name="removeEmpty">是否排除空项（健或值为空或空字符串）</param>
+        /// <param name="urlEncode">是否Value进行URL编码</param>
+        /// <returns></returns>
+        public static string ToURLParameter(this SortedDictionary<string, string> sd, bool removeEmpty = false, bool urlEncode = false)
+        {
+            if(null == sd || sd.Count < 1) return string.Empty;
+            StringBuilder sb = new StringBuilder();
+            foreach(KeyValuePair<string, string> item in sd)
+            {
+                if(removeEmpty && (string.IsNullOrWhiteSpace(item.Key) || string.IsNullOrWhiteSpace(item.Value)))
+                    continue;
+                sb.AppendFormat("&{0}={1}", item.Key, urlEncode ? System.Web.HttpUtility.UrlEncode(item.Value) : item.Value);
+            }
+            return sb.ToString().Trim(new Char[] { '&' });
         }
         #endregion
 
