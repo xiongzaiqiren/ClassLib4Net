@@ -21,6 +21,17 @@ namespace ClassLib4Net.Extension.Dictionary
         {
             return GetValue(dictionary, key, default(T));
         }
+        /// <summary>
+        /// 根据key获取value
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dictionary"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static T GetValue<T>(this SortedDictionary<string, T> dictionary, string key)
+        {
+            return GetValue(dictionary, key, default(T));
+        }
 
         /// <summary>
         /// 根据key获取value
@@ -31,6 +42,18 @@ namespace ClassLib4Net.Extension.Dictionary
         /// <param name="defaultValue"></param>
         /// <returns></returns>
         public static T GetValue<T>(this Dictionary<string, T> dictionary, string key, T defaultValue)
+        {
+            return dictionary == null ? default(T) : dictionary.ContainsKey(key) ? dictionary[key] : defaultValue;
+        }
+        /// <summary>
+        /// 根据key获取value
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dictionary"></param>
+        /// <param name="key"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
+        public static T GetValue<T>(this SortedDictionary<string, T> dictionary, string key, T defaultValue)
         {
             return dictionary == null ? default(T) : dictionary.ContainsKey(key) ? dictionary[key] : defaultValue;
         }
@@ -51,6 +74,22 @@ namespace ClassLib4Net.Extension.Dictionary
                 dictionary.Add(key, value);
             return dictionary;
         }
+        /// <summary>
+        /// 添加键值对数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dictionary"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static SortedDictionary<string, T> AddValue<T>(this SortedDictionary<string, T> dictionary, string key, T value)
+        {
+            if(dictionary.ContainsKey(key))
+                dictionary[key] = value;
+            else
+                dictionary.Add(key, value);
+            return dictionary;
+        }
 
         /// <summary>
         /// 添加键值对数据
@@ -61,6 +100,24 @@ namespace ClassLib4Net.Extension.Dictionary
         /// <param name="values"></param>
         /// <returns></returns>
         public static Dictionary<string, T> AddValues<T>(this Dictionary<string, T> dictionary, string[] keys, T[] values)
+        {
+            var i = 0;
+            foreach(var key in keys)
+            {
+                dictionary.AddValue(key, i >= values.Length ? default(T) : values[i]);
+                i++;
+            }
+            return dictionary;
+        }
+        /// <summary>
+        /// 添加键值对数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dictionary"></param>
+        /// <param name="keys"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        public static SortedDictionary<string, T> AddValues<T>(this SortedDictionary<string, T> dictionary, string[] keys, T[] values)
         {
             var i = 0;
             foreach(var key in keys)
