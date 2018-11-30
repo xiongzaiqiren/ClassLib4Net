@@ -7,14 +7,15 @@ namespace ClassLib4Net.Encrypt
 	/// </summary>
 	public class MD5Helper
 	{
-		#region MD5方式加密字符串的方法
-		/// <summary>
-		/// MD5方式加密字符串的方法
-		/// </summary>
-		/// <param name="text">要进行加密的字符串</param>
-		/// <param name="encoding">字符串编码格式</param>
-		/// <returns>加密后的字符串</returns>
-		public static string MD5Encrypt(string text, System.Text.Encoding encoding)
+        #region MD5方式加密字符串的方法
+        /// <summary>
+        /// MD5方式加密字符串的方法。
+        /// 基于Md5的自定义加密字符串方法：输入一个字符串，返回一个由32个字符组成的十六进制的哈希散列（字符串）。
+        /// </summary>
+        /// <param name="text">要进行加密的字符串</param>
+        /// <param name="encoding">字符串编码格式</param>
+        /// <returns>加密后的字符串</returns>
+        public static string MD5Encrypt(string text, System.Text.Encoding encoding)
 		{
 			if (string.IsNullOrWhiteSpace(text)) return string.Empty;
 			try
@@ -34,35 +35,38 @@ namespace ClassLib4Net.Encrypt
 			}
 		}
 
-		/// <summary>
-		/// MD5方式加密字符串的方法（utf-8编码）
-		/// </summary>
-		/// <param name="text">要进行加密的字符串</param>
-		/// <returns>加密后的字符串</returns>
-		public static string MD5Encrypt(string text)
+        /// <summary>
+        /// MD5方式加密字符串的方法（utf-8编码）。
+        /// 基于Md5的自定义加密字符串方法：输入一个字符串，返回一个由32个字符组成的十六进制的哈希散列（字符串）。
+        /// </summary>
+        /// <param name="text">要进行加密的字符串</param>
+        /// <returns>加密后的字符串</returns>
+        public static string MD5Encrypt(string text)
 		{
 			if (string.IsNullOrWhiteSpace(text)) return string.Empty;
 			return MD5Encrypt(text, System.Text.Encoding.UTF8);
 		}
-		#endregion
+        #endregion
 
-		#region 标准MD5加密
-		/// <summary>
-		/// 使用默认编码进行标准MD5加密
-		/// </summary>
-		/// <param name="strText">text</param>
-		/// <returns>md5 Encrypt string</returns>
-		public static string MD5Hash(string strText)
+        #region 标准MD5加密
+        /// <summary>
+        /// 使用默认编码进行标准MD5加密。
+        /// 基于Md5的自定义加密字符串方法：输入一个字符串，返回一个由32个字符组成的十六进制的哈希散列（字符串）。
+        /// </summary>
+        /// <param name="strText">text</param>
+        /// <returns>md5 Encrypt string</returns>
+        public static string MD5Hash(string strText)
 		{
 			return MD5Hash(strText, System.Text.Encoding.Default);
 		}
-		/// <summary>
-		/// 标准MD5加密
-		/// </summary>
-		/// <param name="strText">text</param>
-		/// <param name="encoding">编码方式</param>
-		/// <returns>md5 Encrypt string</returns>
-		public static string MD5Hash(string strText, System.Text.Encoding encoding)
+        /// <summary>
+        /// 标准MD5加密。
+        /// 基于Md5的自定义加密字符串方法：输入一个字符串，返回一个由32个字符组成的十六进制的哈希散列（字符串）。
+        /// </summary>
+        /// <param name="strText">text</param>
+        /// <param name="encoding">编码方式</param>
+        /// <returns>md5 Encrypt string</returns>
+        public static string MD5Hash(string strText, System.Text.Encoding encoding)
 		{
 			System.Security.Cryptography.MD5 MD5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
 			byte[] datSource = encoding.GetBytes(strText);

@@ -11,14 +11,15 @@ namespace ClassLib4Net.Encrypt
 	/// </summary>
 	public class SHA1Helper
 	{
-		#region SHA1方式加密字符串的方法
-		/// <summary>
-		/// SHA1方式加密字符串的方法
-		/// </summary>
-		/// <param name="text">要进行加密的字符串</param>
-		/// <param name="encoding">字符串编码格式</param>
-		/// <returns>加密后的字符串</returns>
-		public static string SHA1Encrypt(string text, System.Text.Encoding encoding)
+        #region SHA1方式加密字符串的方法
+        /// <summary>
+        /// SHA1方式加密字符串的方法。
+        /// 基于Sha1的自定义加密字符串方法：输入一个字符串，返回一个由40个字符组成的十六进制的哈希散列（字符串）。
+        /// </summary>
+        /// <param name="text">要进行加密的字符串</param>
+        /// <param name="encoding">字符串编码格式</param>
+        /// <returns>加密后的字符串</returns>
+        public static string SHA1Encrypt(string text, System.Text.Encoding encoding)
 		{
 			if (string.IsNullOrWhiteSpace(text)) return string.Empty;
 			try
@@ -38,12 +39,13 @@ namespace ClassLib4Net.Encrypt
 			}
 		}
 
-		/// <summary>
-		/// SHA1方式加密字符串的方法（utf-8编码）
-		/// </summary>
-		/// <param name="text">要进行加密的字符串</param>
-		/// <returns>加密后的字符串</returns>
-		public static string SHA1Encrypt(string text)
+        /// <summary>
+        /// SHA1方式加密字符串的方法（utf-8编码）。
+        /// 基于Sha1的自定义加密字符串方法：输入一个字符串，返回一个由40个字符组成的十六进制的哈希散列（字符串）。
+        /// </summary>
+        /// <param name="text">要进行加密的字符串</param>
+        /// <returns>加密后的字符串</returns>
+        public static string SHA1Encrypt(string text)
 		{
 			if (string.IsNullOrWhiteSpace(text)) return string.Empty;
 			return SHA1Encrypt(text, System.Text.Encoding.UTF8);
