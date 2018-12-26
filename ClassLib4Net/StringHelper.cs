@@ -320,8 +320,9 @@ namespace ClassLib4Net
         /// <summary>
         /// 获取用户友好的日期格式
         /// </summary>
-        /// <param name="date">日期</param>
-        /// <returns>字符串</returns>
+        /// <param name="dt"></param>
+        /// <param name="isLongTime">是否长日期格式</param>
+        /// <returns></returns>
         public static string GetHumanFriendDate(DateTime dt, bool isLongTime = true)
         {
             TimeSpan ts = DateTime.Now.Date.AddDays(1).AddMilliseconds(-1) - dt;
@@ -365,6 +366,30 @@ namespace ClassLib4Net
                     break;
             }
             return dateView;
+        }
+        /// <summary>
+        /// 获取用户友好的日期格式
+        /// </summary>
+        /// <param name="timeSpan"></param>
+        /// <returns></returns>
+        public static string GetHumanFriendDate(TimeSpan timeSpan)
+        {
+            if(timeSpan.TotalMinutes <= 1)
+            {
+                return string.Format("{0}秒", timeSpan.TotalSeconds);
+            }
+            else if(timeSpan.TotalHours <= 1)
+            {
+                return string.Format("{0}分{1}秒", timeSpan.Minutes, timeSpan.Seconds);
+            }
+            else if(timeSpan.TotalDays <= 1)
+            {
+                return string.Format("{0}时{1}分{2}秒", timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds);
+            }
+            else
+            {
+                return string.Format("{0}天{1}时{2}分{3}秒", timeSpan.Days, timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds);
+            }
         }
         #endregion
 
