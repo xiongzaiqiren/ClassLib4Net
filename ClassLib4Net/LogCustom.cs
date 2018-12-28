@@ -25,7 +25,7 @@ namespace ClassLib4Net
 			{
 				path = HttpContext.Current.Server.MapPath("~/");
 			}
-			path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LogCustom/");
+			path = Path.Combine(path, "LogCustom/");
 
 			Log(content, path);
 		}

@@ -28,10 +28,18 @@ namespace ClassLib4Net
 	/// </summary>
 	public enum LogTime
 	{
-		/// <summary>
-		/// 天
-		/// </summary>
-		day,
+        /// <summary>
+        /// 年
+        /// </summary>
+        year,
+        /// <summary>
+        /// 月
+        /// </summary>
+        month,
+        /// <summary>
+        /// 天
+        /// </summary>
+        day,
 		/// <summary>
 		/// 时
 		/// </summary>
@@ -47,99 +55,102 @@ namespace ClassLib4Net
 	/// </summary>
 	public class LogHelper
 	{
-		/// <summary>
-		/// 日志文件位置
-		/// 作者：熊学浩
-		/// 日期：2014-5-27
-		/// </summary>
-		/// <param name="prefix">日志文件名前缀</param>
-		/// <param name="logType">日志类型</param>
-		/// <param name="logTime">日志文件名时间格式</param>
-		/// <returns></returns>
-		private static string LogPath(string prefix, LogType logType, LogTime logTime)
-		{
-			try
-			{
-				string fileName = string.IsNullOrEmpty(prefix) ? "" : prefix;
-				if (logTime == LogTime.hour)
-				{
-					fileName += DateTime.Now.ToString("yyyyMMddHH");
-				}
-				if (logTime == LogTime.day)
-				{
-					fileName += DateTime.Now.ToString("yyyyMMdd");
-				}
-				if (logTime == LogTime.minute)
-				{
-					fileName += DateTime.Now.ToString("yyyyMMddHHmm");
-				}
-				string subPath = string.Format("log/{0}/{1}_{2}.txt", DateTime.Now.ToString("yyyyMM"), logType.ToString(), fileName);
-				string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, subPath);
-				if (HttpContext.Current != null)
-				{
-					path = Path.Combine(HttpContext.Current.Server.MapPath("~/"), subPath);
-				}
-				return path;
-			}
-			catch (Exception)
-			{
-				return "";
-			}
-		}
+        /// <summary>
+        /// 日志文件位置
+        /// 作者：熊学浩
+        /// 日期：2014-5-27
+        /// </summary>
+        /// <param name="prefix">日志文件名前缀</param>
+        /// <param name="logType">日志类型</param>
+        /// <param name="logTime">日志文件名时间格式</param>
+        /// <returns></returns>
+        private static string LogPath(string prefix, LogType logType, LogTime logTime)
+        {
+            DateTime now = DateTime.Now;
+            string fileName = string.IsNullOrEmpty(prefix) ? "" : prefix;
+            switch(logTime)
+            {
+                case LogTime.year:
+                    fileName += now.ToString("yyyy");
+                    break;
+                case LogTime.month:
+                    fileName += now.ToString("yyyyMM");
+                    break;
+                default:
+                case LogTime.day:
+                    fileName += now.ToString("yyyyMMdd");
+                    break;
+                case LogTime.hour:
+                    fileName += now.ToString("yyyyMMddHH");
+                    break;
+                case LogTime.minute:
+                    fileName += now.ToString("yyyyMMddHHmm");
+                    break;
+            }
 
-		/// <summary>
-		/// 生成错误信息
-		/// </summary>
-		/// <param name="Ex"></param>
-		/// <param name="sb"></param>
-		private static void SetSB(Exception Ex, ref StringBuilder sb)
-		{
-			if (sb == null) sb = new StringBuilder();
-			sb.AppendLine();
-			sb.AppendLine("========================================================================");
-			sb.AppendLine("异常发生时间           : " + DateTime.Now);
-			if (HttpContext.Current != null)
-			{
-				HttpRequest request = HttpContext.Current.Request;
-				sb.AppendLine("客户端IP地址           : " + request.UserHostAddress);
-				sb.AppendLine("客户端浏览器版本       : " + request.Browser.Type);
-				sb.AppendLine("客户端上次请求的地址   : " + HttpContext.Current.Server.UrlDecode((request.UrlReferrer != null) ? request.UrlReferrer.ToString() : ""));
-				sb.AppendLine("客户端本次请求的地址   : " + HttpContext.Current.Server.UrlDecode((request.Url != null) ? request.Url.ToString() : ""));
-			}
-			sb.AppendLine("当前异常的消息         : " + Ex.Message);
-			sb.AppendLine("引发当前异常的类名     : " + Ex.TargetSite.DeclaringType.FullName);
-			sb.AppendLine("引发当前异常的方法名   : " + Ex.TargetSite.Name);
-			sb.AppendLine("堆栈信息               : " + Ex.StackTrace);
-			sb.AppendLine("========================================================================");
-			sb.AppendLine();
-		}
+            string subPath = string.Format("log/{0}/{1}_{2}.txt", now.ToString("yyyyMM"), logType.ToString(), fileName);
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, subPath);
+            if(HttpContext.Current != null)
+            {
+                path = Path.Combine(HttpContext.Current.Server.MapPath("~/"), subPath);
+            }
+            return path;
+        }
 
-		/// <summary>
-		/// 记录日志到文件
-		/// 作者：熊学浩
-		/// 日期：2014-5-27
-		/// </summary>
-		/// <param name="msg">日志内容</param>
-		/// <param name="path">日志路径</param>
-		private static void Save(string msg, string path)
-		{
-			try
-			{
-				if (!Directory.Exists(Path.GetDirectoryName(path)))
-					Directory.CreateDirectory(Path.GetDirectoryName(path));
-				using (StreamWriter sw = new StreamWriter(path, true))
-				{
-					sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " >");
-					sw.WriteLine(msg);
-					sw.WriteLine();
-					sw.Close();
-					sw.Dispose();
-				}
-			}
-			catch (Exception)
-			{
-			}
-		}
+        /// <summary>
+        /// 生成错误信息
+        /// </summary>
+        /// <param name="Ex"></param>
+        /// <param name="sb"></param>
+        private static void SetSB(Exception Ex, ref StringBuilder sb)
+        {
+            if(sb == null) sb = new StringBuilder();
+            sb.AppendLine();
+            sb.AppendLine("========================================================================");
+            sb.AppendLine("异常发生时间           : " + DateTime.Now);
+            if(HttpContext.Current != null && HttpContext.Current.Request != null)
+            {
+                HttpRequest request = HttpContext.Current.Request;
+                sb.AppendLine("客户端IP地址           : " + request.UserHostAddress);
+                sb.AppendLine("客户端浏览器版本       : " + request.Browser.Type);
+                sb.AppendLine("客户端上次请求的地址   : " + HttpContext.Current.Server.UrlDecode((request.UrlReferrer != null) ? request.UrlReferrer.ToString() : ""));
+                sb.AppendLine("客户端本次请求的地址   : " + HttpContext.Current.Server.UrlDecode((request.Url != null) ? request.Url.ToString() : ""));
+            }
+            if(Ex != null)
+            {
+                sb.AppendLine("当前异常的消息         : " + Ex.Message);
+                sb.AppendLine("引发当前异常的类名     : " + Ex.TargetSite.DeclaringType.FullName);
+                sb.AppendLine("引发当前异常的方法名   : " + Ex.TargetSite.Name);
+                sb.AppendLine("堆栈信息               : " + Ex.StackTrace);
+            }
+            else
+            {
+                sb.AppendLine("Exception               : " + null);
+            }
+            sb.AppendLine("========================================================================");
+            sb.AppendLine();
+        }
+
+        /// <summary>
+        /// 记录日志到文件
+        /// 作者：熊学浩
+        /// 日期：2014-5-27
+        /// </summary>
+        /// <param name="msg">日志内容</param>
+        /// <param name="path">日志路径</param>
+        private static void Save(string msg, string path)
+        {
+            if(!Directory.Exists(Path.GetDirectoryName(path)))
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+            using(StreamWriter sw = new StreamWriter(path, true))
+            {
+                sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " >");
+                sw.WriteLine(msg);
+                sw.WriteLine();
+                sw.Close();
+                sw.Dispose();
+            }
+        }
 
 		/// <summary>
 		/// 记录日志到文件
@@ -158,7 +169,6 @@ namespace ClassLib4Net
 
 		/// <summary>
 		/// 记录异常日志到文件
-		/// 调用此方法必须支持HttpContext和HttpRequest对象才行
 		/// 作者：熊学浩
 		/// 日期：2014-5-27
 		/// </summary>
@@ -171,7 +181,6 @@ namespace ClassLib4Net
 		}
 		/// <summary>
 		/// 记录异常日志到文件
-		/// 调用此方法必须支持HttpContext和HttpRequest对象才行
 		/// 作者：熊学浩
 		/// 日期：2015-8-13
 		/// </summary>
