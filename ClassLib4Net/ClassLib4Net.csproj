@@ -157,6 +157,7 @@
     <Compile Include="Http\HttpHelper.cs" />
     <Compile Include="IISCache.cs" />
     <Compile Include="ImageHelper.cs" />
+    <Compile Include="ImageWaterMarkHelper.cs" />
     <Compile Include="JsonHelper.cs" />
     <Compile Include="ListHelper.cs" />
     <Compile Include="LogCustom.cs" />
