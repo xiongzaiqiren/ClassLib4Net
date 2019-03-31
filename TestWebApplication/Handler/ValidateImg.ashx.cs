@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.SessionState;
 
 namespace TestWebApplication.Handler
 {
     /// <summary>
     /// ValidateImg 的摘要说明
     /// </summary>
-    public class ValidateImg : IHttpHandler
+    public class ValidateImg : IHttpHandler, IRequiresSessionState
     {
 
         public void ProcessRequest(HttpContext context)
@@ -27,6 +28,8 @@ namespace TestWebApplication.Handler
             context.Response.BufferOutput = true;
             context.Response.BinaryWrite(_Stream.GetBuffer());
             context.Response.Flush();
+
+            context.Session["ValidateCode"] = OrderNo;
         }
 
         public bool IsReusable
