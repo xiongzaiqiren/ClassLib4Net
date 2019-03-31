@@ -22,6 +22,7 @@ namespace TestWebApplication.Handler
             //_CodeImage.Save(Server.MapPath("/1.GIF"));  
 
             context.Response.ContentType = "image/tiff";
+            context.Response.AddHeader("Content-disposition", "attachment; filename=ValidateImg.jpg");
             context.Response.Clear();
             context.Response.BufferOutput = true;
             context.Response.BinaryWrite(_Stream.GetBuffer());
