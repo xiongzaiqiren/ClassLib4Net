@@ -14,7 +14,7 @@ namespace TestWebApplication.Handler
         public void ProcessRequest(HttpContext context)
         {
             string data = context.Request.Params["OrderNo"] ?? ClassLib4Net.RandomCode.createRandomCode(4);
-            string filename = context.Request["filename"] ?? ("二维码" + DateTime.Now.ToString("yyyyMMdd-HHmmss"));
+            string filename = context.Request["filename"] ?? ("验证码" + DateTime.Now.ToString("yyyyMMdd-HHmmss"));
             
             System.Drawing.Image _CodeImage = ClassLib4Net.VerificationCode.Captcha.Generate(data, 0, 0);
             System.IO.MemoryStream _Stream = new System.IO.MemoryStream();

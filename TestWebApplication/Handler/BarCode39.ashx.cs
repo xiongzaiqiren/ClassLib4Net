@@ -14,7 +14,7 @@ namespace TestWebApplication.Handler
         public void ProcessRequest(HttpContext context)
         {
             string data = context.Request.Params["OrderNo"] ?? "Hello World";
-            string filename = context.Request["filename"] ?? ("二维码" + DateTime.Now.ToString("yyyyMMdd-HHmmss"));
+            string filename = context.Request["filename"] ?? ("条形码" + DateTime.Now.ToString("yyyyMMdd-HHmmss"));
             
             System.Drawing.Image _CodeImage = ClassLib4Net.BarCodeHelper.GetCodeImage(data, ClassLib4Net.BarCodeHelper.Code39Model.Code39Normal, true, new System.Drawing.Font("Arial", 12), 0, 60);
             System.IO.MemoryStream _Stream = new System.IO.MemoryStream();
