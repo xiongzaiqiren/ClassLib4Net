@@ -30,6 +30,7 @@ namespace TestWebApplication.Handler
             context.Response.Flush();
 
             context.Session["ValidateCode"] = OrderNo;
+            context.Session.Timeout = 1;
         }
 
         public bool IsReusable
