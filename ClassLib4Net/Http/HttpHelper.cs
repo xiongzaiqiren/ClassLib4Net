@@ -114,7 +114,14 @@ namespace ClassLib4Net.Http
 			}
 			else if (method == Method.POST)
 			{
-				request.ContentType = "application/x-www-form-urlencoded";
+                //json数据，form表单数据（参数化数据），文件数据等
+                /*
+                 application/x-www-form-urlencoded：这应该是最常见的 POST 提交数据的方式了。浏览器的原生 form 表单，如果不设置 enctype 属性，那么最终就会以 application/x-www-form-urlencoded 方式提交数据。提交的数据按照 key1=val1&key2=val2 的方式进行编码，key 和 val 都进行了 URL 转码。大部分服务端语言都对这种方式有很好的支持。
+很多时候，我们用 Ajax 提交数据时，也是使用这种方式。例如 JQuery 和 QWrap 的 Ajax，Content-Type 默认值都是「application/x-www-form-urlencoded;charset=utf-8」。 
+                 multipart/form-data：这又是一个常见的 POST 数据提交的方式。我们使用表单上传文件时，必须让 form 的 enctyped 等于这个值。
+                 application/json：用来告诉服务端消息主体是序列化后的 JSON 字符串。由于 JSON 规范的流行，除了低版本 IE 之外的各大浏览器都原生支持 JSON.stringify，服务端语言也都有处理 JSON 的函数，使用 JSON 不会遇上什么麻烦。
+                 */
+                request.ContentType = "application/x-www-form-urlencoded";
 				byte[] byteArray = encode.GetBytes(data);
 				request.ContentLength = byteArray.Length;
 				System.IO.Stream newStream = request.GetRequestStream();
