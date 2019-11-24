@@ -97,6 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\ApiModel.cs" />
+    <Compile Include="Api\ApiStatus.cs" />
     <Compile Include="AsyncHelper.cs" />
     <Compile Include="BarCodeHelper.cs" />
     <Compile Include="CacheHelper.cs" />

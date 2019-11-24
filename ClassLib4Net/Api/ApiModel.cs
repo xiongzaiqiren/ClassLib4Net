@@ -53,7 +53,7 @@ namespace ClassLib4Net.Api
         /// <summary>
         /// 状态码
         /// </summary>
-        long Status { get; set; }
+        int Status { get; set; }
         /// <summary>
         /// 信息
         /// </summary>
@@ -73,7 +73,7 @@ namespace ClassLib4Net.Api
         /// 状态码
         /// </summary>
         [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public long Status { get; set; }
+        public int Status { get; set; }
         /// <summary>
         /// 信息
         /// </summary>
@@ -81,7 +81,7 @@ namespace ClassLib4Net.Api
         public string Message { get; set; }
 
         public ApiModel() : base() { Status = 0; Message = ""; }
-        public ApiModel(long status = 0, string message = "") : base() { Status = status; Message = message; }
+        public ApiModel(int status = 0, string message = "") : base() { Status = status; Message = message; }
     }
 
     /// <summary>
@@ -99,7 +99,7 @@ namespace ClassLib4Net.Api
         public T Data { get; set; }
 
         public ApiDataModel() : base() { Data = default(T); }
-        public ApiDataModel(T data = default(T), long status = 0, string message = "") : base(status, message) { Data = data; }
+        public ApiDataModel(T data = default(T), int status = 0, string message = "") : base(status, message) { Data = data; }
     }
 
     /// <summary>
@@ -110,7 +110,7 @@ namespace ClassLib4Net.Api
     public class ApiDataModel : ApiDataModel<object>
     {
         public ApiDataModel() : base() { }
-        public ApiDataModel(object data = default(object), long status = 0, string message = "") : base(data, status, message) { }
+        public ApiDataModel(object data = default(object), int status = 0, string message = "") : base(data, status, message) { }
     }
     #endregion
 
@@ -167,7 +167,7 @@ namespace ClassLib4Net.Api
         /// 状态码
         /// </summary>
         [DataMember(EmitDefaultValue = true, IsRequired = true)]
-        public long Status { get; set; }
+        public int Status { get; set; }
         /// <summary>
         /// 信息
         /// </summary>
@@ -176,7 +176,7 @@ namespace ClassLib4Net.Api
 
         public ApiListModel() : base() { List = default(ICollection); }
         public ApiListModel(ICollection list = default(ICollection), long total = 0) : base(list, total) { }
-        public ApiListModel(ICollection list = default(ICollection), long total = 0, long status = 0, string message = "") : base(list, total) { Status = status; Message = message; }
+        public ApiListModel(ICollection list = default(ICollection), long total = 0, int status = 0, string message = "") : base(list, total) { Status = status; Message = message; }
     }
 
     /// <summary>
@@ -195,7 +195,7 @@ namespace ClassLib4Net.Api
         public new ICollection<T> List { get; set; }
 
         public ApiListModel() : base() { List = default(ICollection<T>); }
-        public ApiListModel(ICollection<T> list = default(ICollection<T>), long total = 0, long status = 0, string message = "") { List = list; Total = total; Status = status; Message = message; }
+        public ApiListModel(ICollection<T> list = default(ICollection<T>), long total = 0, int status = 0, string message = "") { List = list; Total = total; Status = status; Message = message; }
     }
     #endregion
 
@@ -238,7 +238,7 @@ namespace ClassLib4Net.Api
     public class ApiDataListModel : ApiDataModel<ApiList>
     {
         public ApiDataListModel() : base() { Data = new ApiList(); }
-        public ApiDataListModel(ApiList data, long status = 0, string message = "") : base(data, status, message) { }
+        public ApiDataListModel(ApiList data, int status = 0, string message = "") : base(data, status, message) { }
     }
 
     /// <summary>
@@ -251,7 +251,7 @@ namespace ClassLib4Net.Api
     public class ApiDataListModel<T> : ApiDataModel<ApiList<T>>
     {
         public ApiDataListModel() : base() { Data = new ApiList<T>(); }
-        public ApiDataListModel(ApiList<T> data, long total = 0, long status = 0, string message = "") : base(data, status, message) { }
+        public ApiDataListModel(ApiList<T> data, long total = 0, int status = 0, string message = "") : base(data, status, message) { }
     }
 
 }
