@@ -13,21 +13,70 @@ namespace ClassLib4Net
     public class ImageWaterMarkHelper
     {
         /// <summary>
+        /// 水印在原图上的位置
+        /// 图片水印位置 0=不使用 1=左上 2=中上 3=右上 4=左中  9=右下
+        /// </summary>
+        public enum WaterMarkPosition : int
+        {
+            /// <summary>
+            /// 不使用
+            /// </summary>
+            Disable = 0,
+            /// <summary>
+            /// 左上
+            /// </summary>
+            LeftTop = 1,
+            /// <summary>
+            /// 中上
+            /// </summary>
+            MiddleTop = 2,
+            /// <summary>
+            /// 右上
+            /// </summary>
+            RightTop = 3,
+            /// <summary>
+            /// 左中
+            /// </summary>
+            LeftMiddle = 4,
+            /// <summary>
+            /// 中央
+            /// </summary>
+            Center = 5,
+            /// <summary>
+            /// 左中
+            /// </summary>
+            RightMiddle = 6,
+            /// <summary>
+            /// 左下
+            /// </summary>
+            LeftBottom = 7,
+            /// <summary>
+            /// 中下
+            /// </summary>
+            MiddleBottom = 8,
+            /// <summary>
+            /// 右下
+            /// </summary>
+            RightBottom = 9
+        }
+
+
+        /// <summary>
         /// 图片水印
         /// </summary>
         /// <param name="oldImgPath">服务器图片物理路径</param>
         /// <param name="newImgPath">保存图片物理路径</param>
         /// <param name="watermarkImgPath">水印图片物理路径</param>
-        /// <param name="watermarkStatus">图片水印位置 0=不使用 1=左上 2=中上 3=右上 4=左中  9=右下</param>
+        /// <param name="watermarkPosition">图片水印位置 0=不使用 1=左上 2=中上 3=右上 4=左中  9=右下</param>
         /// <param name="quality">附加水印图片质量,0-100</param>
         /// <param name="watermarkTransparency">水印的透明度 1--10 10为不透明</param>
-        public static void WaterMarkByImg(string oldImgPath, string newImgPath, string watermarkImgPath, int watermarkStatus, int quality, int watermarkTransparency)
+        public static void WaterMarkByImg(string oldImgPath, string newImgPath, string watermarkImgPath, ImageWaterMarkHelper.WaterMarkPosition watermarkPosition, int quality, int watermarkTransparency)
         {
             if(!File.Exists(oldImgPath))
                 return;
             byte[] _ImageBytes = File.ReadAllBytes(oldImgPath);
             Image img = Image.FromStream(new System.IO.MemoryStream(_ImageBytes));
-            
+
             if(!File.Exists(watermarkImgPath))
                 return;
             Graphics g = Graphics.FromImage(img);
@@ -69,41 +118,41 @@ namespace ClassLib4Net
             int xpos = 0;
             int ypos = 0;
 
-            switch(watermarkStatus)
+            switch(watermarkPosition)
             {
-                case 1:
+                case ImageWaterMarkHelper.WaterMarkPosition.LeftTop:
                     xpos = (int)(img.Width * (float).01);
                     ypos = (int)(img.Height * (float).01);
                     break;
-                case 2:
+                case ImageWaterMarkHelper.WaterMarkPosition.MiddleTop:
                     xpos = (int)((img.Width * (float).50) - (watermark.Width / 2));
                     ypos = (int)(img.Height * (float).01);
                     break;
-                case 3:
+                case ImageWaterMarkHelper.WaterMarkPosition.RightTop:
                     xpos = (int)((img.Width * (float).99) - (watermark.Width));
                     ypos = (int)(img.Height * (float).01);
                     break;
-                case 4:
+                case ImageWaterMarkHelper.WaterMarkPosition.LeftMiddle:
                     xpos = (int)(img.Width * (float).01);
                     ypos = (int)((img.Height * (float).50) - (watermark.Height / 2));
                     break;
-                case 5:
+                case ImageWaterMarkHelper.WaterMarkPosition.Center:
                     xpos = (int)((img.Width * (float).50) - (watermark.Width / 2));
                     ypos = (int)((img.Height * (float).50) - (watermark.Height / 2));
                     break;
-                case 6:
+                case ImageWaterMarkHelper.WaterMarkPosition.RightMiddle:
                     xpos = (int)((img.Width * (float).99) - (watermark.Width));
                     ypos = (int)((img.Height * (float).50) - (watermark.Height / 2));
                     break;
-                case 7:
+                case ImageWaterMarkHelper.WaterMarkPosition.LeftBottom:
                     xpos = (int)(img.Width * (float).01);
                     ypos = (int)((img.Height * (float).99) - watermark.Height);
                     break;
-                case 8:
+                case ImageWaterMarkHelper.WaterMarkPosition.MiddleBottom:
                     xpos = (int)((img.Width * (float).50) - (watermark.Width / 2));
                     ypos = (int)((img.Height * (float).99) - watermark.Height);
                     break;
-                case 9:
+                case ImageWaterMarkHelper.WaterMarkPosition.RightBottom:
                     xpos = (int)((img.Width * (float).99) - (watermark.Width));
                     ypos = (int)((img.Height * (float).99) - watermark.Height);
                     break;
@@ -139,6 +188,26 @@ namespace ClassLib4Net
             imageAttributes.Dispose();
         }
 
+        /// <summary>
+        /// 根据背景图大小计算文字水印的推荐大小
+        /// </summary>
+        /// <param name="bgSize"></param>
+        /// <param name="defaultEmSize"></param>
+        /// <returns></returns>
+        private static int emSize(int bgWidth, int bgHeight, ImageWaterMarkHelper.WaterMarkPosition watermarkPosition, int defaultEmSize = 12)
+        {
+            //暂时只支持横排
+            if(bgWidth <= 500)
+                return defaultEmSize;
+            else if(bgWidth <= 1024)
+                return 24;
+            else if(bgWidth <= 2048)
+                return 48;
+            else if(bgWidth <= 3024)
+                return 64;
+            else
+                return 80;
+        }
 
         /// <summary>
         /// 文字水印
@@ -147,16 +216,17 @@ namespace ClassLib4Net
         /// <param name="oldImgPath">服务器图片物理路径</param>
         /// <param name="newImgPath">保存图片物理路径</param>
         /// <param name="watermarkText">水印文字</param>
-        /// <param name="watermarkStatus">图片水印位置 0=不使用 1=左上 2=中上 3=右上 4=左中  9=右下</param>
+        /// <param name="watermarkPosition">图片水印位置 0=不使用 1=左上 2=中上 3=右上 4=左中  9=右下</param>
         /// <param name="quality">附加水印图片质量,0-100</param>
         /// <param name="fontname">字体</param>
         /// <param name="fontsize">字体大小</param>
-        public static void WaterMarkByText(string oldImgPath, string newImgPath, string watermarkText, int watermarkStatus, int quality = 72, string fontname = "宋体", int fontsize = 12)
+        public static void WaterMarkByText(string oldImgPath, string newImgPath, string watermarkText, ImageWaterMarkHelper.WaterMarkPosition watermarkPosition, int quality = 72, string fontname = "宋体", int fontsize = 12)
         {
             if(!File.Exists(oldImgPath))
                 return;
             byte[] _ImageBytes = File.ReadAllBytes(oldImgPath);
             Image img = Image.FromStream(new System.IO.MemoryStream(_ImageBytes));
+            fontsize = emSize(img.Width, img.Height, watermarkPosition, fontsize);
 
             Graphics g = Graphics.FromImage(img);
             Font drawFont = new Font(fontname, fontsize, FontStyle.Regular, GraphicsUnit.Pixel);
@@ -166,48 +236,48 @@ namespace ClassLib4Net
             float xpos = 0;
             float ypos = 0;
 
-            switch(watermarkStatus)
+            switch(watermarkPosition)
             {
-                case 1:
+                case ImageWaterMarkHelper.WaterMarkPosition.LeftTop:
                     xpos = (float)img.Width * (float).01;
                     ypos = (float)img.Height * (float).01;
                     break;
-                case 2:
+                case ImageWaterMarkHelper.WaterMarkPosition.MiddleTop:
                     xpos = ((float)img.Width * (float).50) - (crSize.Width / 2);
                     ypos = (float)img.Height * (float).01;
                     break;
-                case 3:
+                case ImageWaterMarkHelper.WaterMarkPosition.RightTop:
                     xpos = ((float)img.Width * (float).99) - crSize.Width;
                     ypos = (float)img.Height * (float).01;
                     break;
-                case 4:
+                case ImageWaterMarkHelper.WaterMarkPosition.LeftMiddle:
                     xpos = (float)img.Width * (float).01;
                     ypos = ((float)img.Height * (float).50) - (crSize.Height / 2);
                     break;
-                case 5:
+                case ImageWaterMarkHelper.WaterMarkPosition.Center:
                     xpos = ((float)img.Width * (float).50) - (crSize.Width / 2);
                     ypos = ((float)img.Height * (float).50) - (crSize.Height / 2);
                     break;
-                case 6:
+                case ImageWaterMarkHelper.WaterMarkPosition.RightMiddle:
                     xpos = ((float)img.Width * (float).99) - crSize.Width;
                     ypos = ((float)img.Height * (float).50) - (crSize.Height / 2);
                     break;
-                case 7:
+                case ImageWaterMarkHelper.WaterMarkPosition.LeftBottom:
                     xpos = (float)img.Width * (float).01;
                     ypos = ((float)img.Height * (float).99) - crSize.Height;
                     break;
-                case 8:
+                case ImageWaterMarkHelper.WaterMarkPosition.MiddleBottom:
                     xpos = ((float)img.Width * (float).50) - (crSize.Width / 2);
                     ypos = ((float)img.Height * (float).99) - crSize.Height;
                     break;
-                case 9:
+                case ImageWaterMarkHelper.WaterMarkPosition.RightBottom:
                     xpos = ((float)img.Width * (float).99) - crSize.Width;
                     ypos = ((float)img.Height * (float).99) - crSize.Height;
                     break;
             }
 
-            g.DrawString(watermarkText, drawFont, new SolidBrush(Color.White), xpos + 1, ypos + 1);
-            g.DrawString(watermarkText, drawFont, new SolidBrush(Color.Black), xpos, ypos);
+            g.DrawString(watermarkText, drawFont, new SolidBrush(Color.Black), xpos + 3, ypos + 3);
+            g.DrawString(watermarkText, drawFont, new SolidBrush(Color.White), xpos, ypos);
 
             ImageCodecInfo[] codecs = ImageCodecInfo.GetImageEncoders();
             ImageCodecInfo ici = null;

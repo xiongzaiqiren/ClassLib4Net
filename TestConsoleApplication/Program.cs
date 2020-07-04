@@ -10,6 +10,7 @@ namespace TestConsoleApplication
     {
         static void Main(string[] args)
         {
+            /*
             #region 时间戳测试
             var t = new DateTime(2018, 11, 6, 11, 17, 9, 964);
             Console.WriteLine("目标时间：{0}", t.ToString("yyyy-MM-dd HH:mm:ss.fff"));
@@ -40,6 +41,9 @@ namespace TestConsoleApplication
             Console.WriteLine("长度：" + des.Length);
             
             #endregion
+            */
+
+            Image.ImageTest.WaterMarkByText();
 
             //Cache.RedisTest.String();
             //Cache.RedisTest.Sort();
