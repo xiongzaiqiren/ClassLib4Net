@@ -9,15 +9,49 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>ClassLib4Net测试实例（Web of MVC）</title>
+    <style>
+        fieldset {
+            border: solid 1px #027bf7;
+            margin: 0 0 8px 0;
+        }
+            fieldset legend {
+                background-color: #027bf7;
+                color: #fff;
+            }
+
+    </style>
 </head>
 <body>
-    <p>@Html.Raw(ClassLib4Net.BarCodeHelper.Get39ToHtml("xiongzaiqiren123", 2, 50))</p>
-    <p>@Html.Raw(ClassLib4Net.BarCodeHelper.GetEAN13ToHtml("0123456789123", 2, 50))</p>
-    <p><img src="~/Handler/BarCode39.ashx?OrderNo=32134411" /></p>
-    <p><img src="~/Handler/Captcha.ashx" /></p>
-    <p><img src="~/Handler/ValidateImg.ashx" /></p>
-    <p><img src="~/Handler/QRCode.ashx" /></p>
+    <fieldset>
+        <legend>高精度条形码 · 样例</legend>
+        @Html.Raw(ClassLib4Net.BarCodeHelper.Get39ToHtml("xiongzaiqiren", 2, 50))
+    </fieldset>
 
+    <fieldset>
+        <legend>普通商品条形码 · 样例</legend>
+        @Html.Raw(ClassLib4Net.BarCodeHelper.GetEAN13ToHtml("1531121211800", 2, 50))
+    </fieldset>
+
+    <fieldset>
+        <legend>高密度条形码 · 样例</legend>
+        <img src="~/Handler/BarCode39.ashx?OrderNo=xiongzaiqiren" />
+    </fieldset>
+
+    <fieldset>
+        <legend>三维立体验证码 · 样例</legend>
+        <img src="~/Handler/Captcha.ashx" />
+    </fieldset>
+
+    <fieldset>
+        <legend>二维混淆验证码 · 样例</legend>
+        <img src="~/Handler/ValidateImg.ashx" />
+    </fieldset>
+
+    <fieldset>
+        <legend>自定义二维码 · 样例</legend>
+        <img src="~/Handler/QRCode.ashx?data=你想什么，我们就做什么" />
+    </fieldset>
+    
     <div> 
     </div>
 </body>
